@@ -37,5 +37,8 @@ Makefile*
 CMakeLists.txt.user
 
 # visual c++
+Debug
+Release
 
-
+# this project
+output
