@@ -1,0 +1,1 @@
+..\..\models\Fandisk0.3\Original.obj ..\..\output\Fandisk0.3 Noise --noiseType Impulsive
