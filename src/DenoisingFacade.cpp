@@ -20,6 +20,11 @@ DenoisingFacade::DenoisingFacade()
 	algorithms_type_ = AlgorithmsType::kNon;
 
 	algorithms_dictionary_.insert(std::make_pair("Noise", AlgorithmsType::kNoise));
+	algorithms_dictionary_.insert(std::make_pair("BilateralMeshDenoising", AlgorithmsType::kBilateralMeshDenoising));
+	algorithms_dictionary_.insert(std::make_pair("NonIterativeFeaturePreservingMeshFiltering", AlgorithmsType::kNonIterativeFeaturePreservingMeshFiltering));
+	algorithms_dictionary_.insert(std::make_pair("FastAndEffectiveFeaturePreservingMeshDenoising", AlgorithmsType::kFastAndEffectiveFeaturePreservingMeshDenoising));
+	algorithms_dictionary_.insert(std::make_pair("BilateralNormalFilteringForMeshDenoising", AlgorithmsType::kBilateralNormalFilteringForMeshDenoising));
+	algorithms_dictionary_.insert(std::make_pair("MeshDenoisingViaL0Minimization", AlgorithmsType::kMeshDenoisingViaL0Minimization));
 	algorithms_dictionary_.insert(std::make_pair("GuidedMeshNormalFiltering", AlgorithmsType::kGuidedMeshNormalFiltering));
 	
 
