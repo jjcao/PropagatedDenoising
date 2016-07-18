@@ -24,6 +24,7 @@ public:
 	void setAlgorithmType(const string& type);
 	void initAlgorithm(DataManager *_data_manager, ParameterSet *_parameter_set);
 	Noise::NoiseType getNoiseType(const string& type);
+	double getParaValue(const string& type);
 	void run();
 
 private:

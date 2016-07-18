@@ -27,7 +27,7 @@ DenoisingFacade::DenoisingFacade()
 	algorithms_dictionary_.insert(std::make_pair("MeshDenoisingViaL0Minimization", AlgorithmsType::kMeshDenoisingViaL0Minimization));
 	algorithms_dictionary_.insert(std::make_pair("GuidedMeshNormalFiltering", AlgorithmsType::kGuidedMeshNormalFiltering));
 	
-
+	//Noise 可选参数
 	noise_type_dictionary_.insert(std::make_pair("Gaussian", Noise::NoiseType::kGaussian));
 	noise_type_dictionary_.insert(std::make_pair("Impulsive", Noise::NoiseType::kImpulsive));
 }
@@ -86,4 +86,8 @@ void DenoisingFacade::setAlgorithmType(const string& type)
 Noise::NoiseType DenoisingFacade::getNoiseType(const string& type)
 {
 	return noise_type_dictionary_.at(type);
+}
+double DenoisingFacade::getParaValue(const string& type)
+{
+	return atof(type.c_str());
 }
