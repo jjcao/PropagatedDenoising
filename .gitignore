@@ -40,7 +40,8 @@ CMakeLists.txt.user
 Debug
 Release
 *.sln
-*.vcxproj*
+*.vcxproj
+*.vcxproj.*
 
 # this project
 output
