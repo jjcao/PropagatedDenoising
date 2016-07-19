@@ -42,6 +42,7 @@ Release
 *.sln
 *.vcxproj
 *.vcxproj.*
+*.opendb
 
 # this project
 output

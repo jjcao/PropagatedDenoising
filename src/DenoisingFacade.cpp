@@ -93,7 +93,3 @@ Noise::NoiseType DenoisingFacade::getNoiseType(const string& type)
 {
 	return noise_type_dictionary_.at(type);
 }
-double DenoisingFacade::getParaValue(const string& type)
-{
-	return atof(type.c_str());
-}

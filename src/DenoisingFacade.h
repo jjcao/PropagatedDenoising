@@ -22,10 +22,12 @@ public:
 		kShortestPropagationMeshFiltering
 	};
 
+	void initAlgorithm(DataManager *_data_manager, ParameterSet *_parameter_set); 
+	
 	void setAlgorithmType(const string& type);
-	void initAlgorithm(DataManager *_data_manager, ParameterSet *_parameter_set);
+	AlgorithmsType getAlgorithmType(){return algorithms_type_;}
+	
 	Noise::NoiseType getNoiseType(const string& type);
-	double getParaValue(const string& type);
 	void run();
 
 private:
