@@ -1,42 +1,30 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenMesh", "OpenMesh\OpenMesh.vcxproj", "{EECDD722-87BB-356A-9CA4-86167764E2BF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Denoising", "Denoising\Denoising.vcxproj", "{0B6CB52B-4D49-3BD7-AC4F-4D464F402453}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Denoising", "Denoising\Denoising.vcxproj", "{B12702AD-ABFB-343A-A199-8E24837244A3}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EECDD722-87BB-356A-9CA4-86167764E2BF} = {EECDD722-87BB-356A-9CA4-86167764E2BF}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenMesh", "OpenMesh\OpenMesh.vcxproj", "{9C8CA2CD-4EAB-36B1-88A5-DA4A0A8E258C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EECDD722-87BB-356A-9CA4-86167764E2BF}.Debug|x64.ActiveCfg = Debug|x64
-		{EECDD722-87BB-356A-9CA4-86167764E2BF}.Debug|x64.Build.0 = Debug|x64
-		{EECDD722-87BB-356A-9CA4-86167764E2BF}.Debug|x86.ActiveCfg = Debug|x64
-		{EECDD722-87BB-356A-9CA4-86167764E2BF}.Release|x64.ActiveCfg = Release|x64
-		{EECDD722-87BB-356A-9CA4-86167764E2BF}.Release|x64.Build.0 = Release|x64
-		{EECDD722-87BB-356A-9CA4-86167764E2BF}.Release|x86.ActiveCfg = Release|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.ActiveCfg = Debug|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x64.Build.0 = Debug|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x86.ActiveCfg = Debug|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|x86.Build.0 = Debug|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.ActiveCfg = Release|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x64.Build.0 = Release|x64
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x86.ActiveCfg = Release|Win32
-		{B12702AD-ABFB-343A-A199-8E24837244A3}.Release|x86.Build.0 = Release|Win32
+		{0B6CB52B-4D49-3BD7-AC4F-4D464F402453}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0B6CB52B-4D49-3BD7-AC4F-4D464F402453}.Debug|Win32.Build.0 = Debug|Win32
+		{0B6CB52B-4D49-3BD7-AC4F-4D464F402453}.Release|Win32.ActiveCfg = Release|Win32
+		{0B6CB52B-4D49-3BD7-AC4F-4D464F402453}.Release|Win32.Build.0 = Release|Win32
+		{9C8CA2CD-4EAB-36B1-88A5-DA4A0A8E258C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9C8CA2CD-4EAB-36B1-88A5-DA4A0A8E258C}.Debug|Win32.Build.0 = Debug|Win32
+		{9C8CA2CD-4EAB-36B1-88A5-DA4A0A8E258C}.Release|Win32.ActiveCfg = Release|Win32
+		{9C8CA2CD-4EAB-36B1-88A5-DA4A0A8E258C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = $(DefaultQtVersion)
+		Qt5Version = msvc2013_opengl
 	EndGlobalSection
 EndGlobal

@@ -6,6 +6,8 @@
 #include "Algorithms/BilateralNormalFilteringForMeshDenoising.h"
 #include "Algorithms/MeshDenoisingViaL0Minimization.h"
 #include "Algorithms/GuidedMeshNormalFiltering.h"
+#include "Algorithms/ShortestPropagationMeshFiltering.h"
+#include "Algorithms/dijkstra.h"
 
 using std::pair;
 //enum AlgorithmsType {
@@ -26,6 +28,7 @@ DenoisingFacade::DenoisingFacade()
 	algorithms_dictionary_.insert(std::make_pair("BilateralNormalFilteringForMeshDenoising", AlgorithmsType::kBilateralNormalFilteringForMeshDenoising));
 	algorithms_dictionary_.insert(std::make_pair("MeshDenoisingViaL0Minimization", AlgorithmsType::kMeshDenoisingViaL0Minimization));
 	algorithms_dictionary_.insert(std::make_pair("GuidedMeshNormalFiltering", AlgorithmsType::kGuidedMeshNormalFiltering));
+	algorithms_dictionary_.insert(std::make_pair("ShortestPropagationMeshFiltering", AlgorithmsType::kShortestPropagationMeshFiltering));
 	
 	//Noise 可选参数
 	noise_type_dictionary_.insert(std::make_pair("Gaussian", Noise::NoiseType::kGaussian));
@@ -66,6 +69,9 @@ void DenoisingFacade::initAlgorithm(DataManager *_data_manager, ParameterSet *_p
 		break;
 	case kGuidedMeshNormalFiltering:
 		mesh_denoise_base_ = new GuidedMeshNormalFiltering(_data_manager, _parameter_set);
+		break;
+	case kShortestPropagationMeshFiltering:
+		mesh_denoise_base_ = new ShortestPropagationMeshFiltering(_data_manager, _parameter_set);
 		break;
 	default:
 		break;

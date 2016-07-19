@@ -18,15 +18,23 @@ int main(int argc, char *argv[])
 	parser.addVersionOption();//-v / --version option, which displays the version string of the application.
 	parser.addPositionalArgument("source", QCoreApplication::translate("main", "Source file to denoise."));
 	parser.addPositionalArgument("destination", QCoreApplication::translate("main", "Destination directory."));
-	parser.addPositionalArgument("algorithmType", QCoreApplication::translate("main", "Algorithm type: Noise, BilateralMeshDenoising, NonIterativeFeaturePreservingMeshFiltering, FastAndEffectiveFeaturePreservingMeshDenoising, BilateralNormalFilteringForMeshDenoising, MeshDenoisingViaL0Minimization, GuidedMeshNormalFiltering."));
+	parser.addPositionalArgument("algorithmType", QCoreApplication::translate("main", "Algorithm type: \
+																					  Noise, \
+																					  BilateralMeshDenoising, \
+																					  NonIterativeFeaturePreservingMeshFiltering, \
+																					  FastAndEffectiveFeaturePreservingMeshDenoising, \
+																					  BilateralNormalFilteringForMeshDenoising, \
+																					  MeshDenoisingViaL0Minimization, \
+																					  GuidedMeshNormalFiltering, \
+																					  ShortestPropagationMeshFiltering."));
 	
-
+	//add noise
 	QCommandLineOption noiseTypeOption(QStringList() << "noiseType", QCoreApplication::translate("main", "Noise type: Gaussian, Impulsive."), "Noise type" );
 	parser.addOption(noiseTypeOption);
 	QCommandLineOption noiseLevelOption(QStringList() << "noiseLevel", QCoreApplication::translate("main", "Noise Level: between 0 and 1."), "Noise level");
 	parser.addOption(noiseLevelOption);
 
-
+	//GuidedMeshNormalFiltering
 	QCommandLineOption GuidedFilterFaceDistOption(QStringList() << "GuidedFilterFaceDist", QCoreApplication::translate("main", "how much around a face."), "Multiple(* avg face dis.)");
 	parser.addOption(GuidedFilterFaceDistOption);
 	QCommandLineOption GuidedFilterSigmaSOption(QStringList() << "GuidedFilterSigmaS", QCoreApplication::translate("main", "sigma_s"), "Multiple(* sigma_s)");
@@ -38,6 +46,17 @@ int main(int argc, char *argv[])
 	QCommandLineOption GuidedFilterVertexIterNumOption(QStringList() << "GuidedFilterVertexIterNum", QCoreApplication::translate("main", "Vertex Iteration Number"), "Vertex Iteration Num.");
 	parser.addOption(GuidedFilterVertexIterNumOption);
 
+	//ShortestPropagationMeshFiltering
+	QCommandLineOption SPropagationFilterFaceDistOption(QStringList() << "SPropagationFilterFaceDist", QCoreApplication::translate("main", "how much around a face."), "Multiple(* avg face dis.)");
+	parser.addOption(SPropagationFilterFaceDistOption);
+	QCommandLineOption SPropagationFilterSigmaSOption(QStringList() << "SPropagationFilterSigmaS", QCoreApplication::translate("main", "sigma_s"), "Multiple(* sigma_s)");
+	parser.addOption(SPropagationFilterSigmaSOption);
+	QCommandLineOption SPropagationFilterSigmaROption(QStringList() << "SPropagationFilterSigmaR", QCoreApplication::translate("main", "sigma_r"), "sigma_r");
+	parser.addOption(SPropagationFilterSigmaROption);
+	QCommandLineOption SPropagationFilterNormalIterNumOption(QStringList() << "SPropagationFilterNormalIterNum", QCoreApplication::translate("main", "Normal Iteration Number"), "(Local)Normal Iteration Num.");
+	parser.addOption(SPropagationFilterNormalIterNumOption);
+	QCommandLineOption SPropagationFilterVertexIterNumOption(QStringList() << "SPropagationFilterVertexIterNum", QCoreApplication::translate("main", "Vertex Iteration Number"), "Vertex Iteration Num.");
+	parser.addOption(SPropagationFilterVertexIterNumOption);
 	// Process(´¦Àí) the actual command line arguments given by the user
 	parser.process(a);
 
@@ -112,10 +131,28 @@ int main(int argc, char *argv[])
 			params.setValue("sigma_r", df.getParaValue(SigmaR.toStdString()));
 		QString NormalIterNum = parser.value(GuidedFilterNormalIterNumOption);
 		if (!NormalIterNum.isEmpty())
-			params.setValue("(Local)Normal Iteration Num", (int)df.getParaValue(NormalIterNum.toStdString()));
+			params.setValue("(Local)Normal Iteration Num.", (int)df.getParaValue(NormalIterNum.toStdString()));
 		QString VertexIterNum = parser.value(GuidedFilterVertexIterNumOption);
 		if (!VertexIterNum.isEmpty())
-			params.setValue("Vertex Iteration Num", (int)df.getParaValue(VertexIterNum.toStdString()));
+			params.setValue("Vertex Iteration Num.", (int)df.getParaValue(VertexIterNum.toStdString()));
+	}
+	if (args.at(2).toStdString() == "ShortestPropagationMeshFiltering")
+	{
+		QString FaceDist = parser.value(SPropagationFilterFaceDistOption);
+		if (!FaceDist.isEmpty())
+			params.setValue("Multiple(* avg face dis.)", df.getParaValue(FaceDist.toStdString()));
+		QString SigmaS = parser.value(SPropagationFilterSigmaSOption);
+		if (!SigmaS.isEmpty())
+			params.setValue("Multiple(* sigma_s)", df.getParaValue(SigmaS.toStdString()));
+		QString SigmaR = parser.value(SPropagationFilterSigmaROption);
+		if (!SigmaR.isEmpty())
+			params.setValue("sigma_r", df.getParaValue(SigmaR.toStdString()));
+		QString NormalIterNum = parser.value(SPropagationFilterNormalIterNumOption);
+		if (!NormalIterNum.isEmpty())
+			params.setValue("(Local)Normal Iteration Num.", (int)df.getParaValue(NormalIterNum.toStdString()));
+		QString VertexIterNum = parser.value(SPropagationFilterVertexIterNumOption);
+		if (!VertexIterNum.isEmpty())
+			params.setValue("Vertex Iteration Num.", (int)df.getParaValue(VertexIterNum.toStdString()));
 	}
 
 

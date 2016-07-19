@@ -18,7 +18,8 @@ public:
 		kNon,                                            kNoise, 
 		kBilateralMeshDenoising,                         kNonIterativeFeaturePreservingMeshFiltering,
 		kFastAndEffectiveFeaturePreservingMeshDenoising, kBilateralNormalFilteringForMeshDenoising,
-		kMeshDenoisingViaL0Minimization,                 kGuidedMeshNormalFiltering
+		kMeshDenoisingViaL0Minimization,                 kGuidedMeshNormalFiltering,
+		kShortestPropagationMeshFiltering
 	};
 
 	void setAlgorithmType(const string& type);
