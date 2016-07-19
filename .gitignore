@@ -39,6 +39,8 @@ CMakeLists.txt.user
 # visual c++
 Debug
 Release
+*.sln
+*.vcxproj*
 
 # this project
 output
