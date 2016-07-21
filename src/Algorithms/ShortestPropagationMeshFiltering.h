@@ -29,8 +29,6 @@ private:
 	//)
 	double getSigmaS(double multiple, std::vector<TriMesh::Point> &centroid, TriMesh &mesh);
 
-	void BuildGraph3(TriMesh &mesh, FaceNeighborType face_neighbor_type, std::vector<TriMesh::Normal> &normals, 
-		std::vector<std::vector<GraphPair> > &fromMesh);
 	void buildLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> face_neighbor, AdjacencyList &localGraph, std::vector<int> &localFaceIdx);
 	//void dijkstraPath(const std::vector< std::vector<dualEdge> > &graph,
 		//TriMesh::FaceHandle source, TriMesh::FaceHandle target, std::vector<TriMesh::FaceHandle> &face_path);
