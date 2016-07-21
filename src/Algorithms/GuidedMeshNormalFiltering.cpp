@@ -66,72 +66,6 @@ void GuidedMeshNormalFiltering::initParameters()
     parameter_set_->setIntroduction(QString("Guided Mesh Normal Filtering -- Parameters"));
 }
 
-void GuidedMeshNormalFiltering::getVertexBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, std::vector<TriMesh::FaceHandle> &face_neighbor)
-{
-    getFaceNeighbor(mesh, fh, kVertexBased, face_neighbor);
-}
-
-void GuidedMeshNormalFiltering::getRadiusBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, double radius, std::vector<TriMesh::FaceHandle> &face_neighbor)
-{
-    TriMesh::Point ci = mesh.calc_face_centroid(fh);
-    std::vector<bool> flag((int)mesh.n_faces(), false);
-
-    face_neighbor.clear();
-    flag[fh.idx()] = true;
-    std::queue<TriMesh::FaceHandle> queue_face_handle;
-    queue_face_handle.push(fh);
-
-    std::vector<TriMesh::FaceHandle> temp_face_neighbor;
-    while(!queue_face_handle.empty())
-    {
-        TriMesh::FaceHandle temp_face_handle_queue = queue_face_handle.front();
-        if(temp_face_handle_queue != fh)
-            face_neighbor.push_back(temp_face_handle_queue);
-        queue_face_handle.pop();
-        getVertexBasedFaceNeighbor(mesh, temp_face_handle_queue, temp_face_neighbor);
-        for(int i = 0; i < (int)temp_face_neighbor.size(); i++)
-        {
-            TriMesh::FaceHandle temp_face_handle = temp_face_neighbor[i];
-            if(!flag[temp_face_handle.idx()])
-            {
-                TriMesh::Point cj = mesh.calc_face_centroid(temp_face_handle);
-                double distance = (ci - cj).length();
-                if(distance <= radius)
-                    queue_face_handle.push(temp_face_handle);
-                flag[temp_face_handle.idx()] = true;
-            }
-        }
-    }
-}
-
-void GuidedMeshNormalFiltering::getAllFaceNeighborGMNF(TriMesh &mesh, MeshDenoisingBase::FaceNeighborType face_neighbor_type, double radius, bool include_central_face,
-                                                       std::vector<std::vector<TriMesh::FaceHandle> > &all_face_neighbor)
-{
-    std::vector<TriMesh::FaceHandle> face_neighbor;
-    for(TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
-    {
-        if(face_neighbor_type == kVertexBased)
-            getVertexBasedFaceNeighbor(mesh, *f_it, face_neighbor);
-        else if(face_neighbor_type == kRadiusBased)
-            getRadiusBasedFaceNeighbor(mesh, *f_it, radius, face_neighbor);
-
-        if(include_central_face)
-            face_neighbor.push_back(*f_it);
-        all_face_neighbor[f_it->idx()] = face_neighbor;
-    }
-}
-
-void GuidedMeshNormalFiltering::getAllGuidedNeighborGMNF(TriMesh &mesh, std::vector<std::vector<TriMesh::FaceHandle> > &all_guided_neighbor)
-{
-    std::vector<TriMesh::FaceHandle> face_neighbor;
-    for(TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
-    {
-        getVertexBasedFaceNeighbor(mesh, *f_it, face_neighbor);
-        face_neighbor.push_back(*f_it);
-        all_guided_neighbor[f_it->idx()] = face_neighbor;
-    }
-}
-
 double GuidedMeshNormalFiltering::GaussianWeight(double distance, double sigma)
 {
     return std::exp( -0.5 * distance * distance / (sigma * sigma));
@@ -252,26 +186,6 @@ void GuidedMeshNormalFiltering::getGuidedNormals(TriMesh &mesh, std::vector<std:
     }
 }
 
-double GuidedMeshNormalFiltering::getRadius(double multiple, TriMesh &mesh)
-{
-    std::vector<TriMesh::Point> centroid;
-    getFaceCentroid(mesh, centroid);
-
-    double radius = 0.0;
-    double num = 0.0;
-    for(TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
-    {
-        TriMesh::Point fi = centroid[f_it->idx()];
-        for(TriMesh::FaceFaceIter ff_it = mesh.ff_iter(*f_it); ff_it.is_valid(); ff_it++)
-        {
-            TriMesh::Point fj = centroid[ff_it->idx()];
-            radius += (fj - fi).length();
-            num++;
-        }
-    }
-    return radius * multiple / num;
-}
-
 double GuidedMeshNormalFiltering::getSigmaS(double multiple, std::vector<TriMesh::Point> &centroid, TriMesh &mesh)
 {
     double sigma_s = 0.0, num = 0.0;
@@ -334,12 +248,12 @@ void GuidedMeshNormalFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, 
 
     double radius;
     if(face_neighbor_type == kRadiusBased)
-        radius = getRadius(multiple_radius, mesh);
+		radius = getAveragefaceCenterDistance(mesh) * multiple_radius;
 
     std::vector<std::vector<TriMesh::FaceHandle> > all_face_neighbor((int)mesh.n_faces());
-    getAllFaceNeighborGMNF(mesh, face_neighbor_type, radius, include_central_face, all_face_neighbor);
+    getAllFaceNeighbor(mesh, all_face_neighbor, face_neighbor_type, include_central_face, radius);	
     std::vector<std::vector<TriMesh::FaceHandle> > all_guided_neighbor((int)mesh.n_faces());
-    getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);
+	getAllFaceNeighbor(mesh, all_guided_neighbor, kVertexBased); //getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);
     getFaceNormal(mesh, filtered_normals);
 
     std::vector<double> face_area((int)mesh.n_faces());
@@ -423,12 +337,12 @@ void GuidedMeshNormalFiltering::updateFilteredNormalsGlobalScheme(TriMesh &mesh,
 
     double radius;
     if(face_neighbor_type == kRadiusBased)
-        radius = getRadius(multiple_radius, mesh);
+        radius = getAveragefaceCenterDistance(mesh) * multiple_radius;
 
     std::vector<std::vector<TriMesh::FaceHandle> > all_face_neighbor((int)mesh.n_faces());
-    getAllFaceNeighborGMNF(mesh, face_neighbor_type, radius, include_central_face, all_face_neighbor);
+    getAllFaceNeighbor(mesh, all_face_neighbor, face_neighbor_type, include_central_face, radius);
     std::vector<std::vector<TriMesh::FaceHandle> > all_guided_neighbor((int)mesh.n_faces());
-    getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);
+	getAllFaceNeighbor(mesh, all_guided_neighbor, kVertexBased); //getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);	
     getFaceNormal(mesh, filtered_normals);
 
     std::vector<double> face_area((int)mesh.n_faces());

@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
 	// options for GuidedMeshNormalFiltering && ShortestPropagationMeshFiltering
 	QCommandLineOption FaceNeighborTypeOption(QStringList() << "faceNeighborType",
-		"The type of the neighbor of the face: geometrical or topological", "Face neighbor type", "geometrical");
+		"The type of the neighbor of the face: geometrical (radius based: 2) or topological (vertex: 0, edge: 1 or face-ring based: 3)", "Face neighbor type", "geometrical");
 	parser.addOption(FaceNeighborTypeOption);
 	QCommandLineOption FaceDistOption(QStringList() << "FaceDist",
 		"Multiple(* avg face dis.) => Radius for search geometrical neighbor of the face; or it means topological distance", "Face distant");

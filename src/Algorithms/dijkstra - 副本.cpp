@@ -10,12 +10,62 @@
 //    << std::endl;
 //}
 
-void Dijkstra::buildGraph(AdjacencyList &fromMesh)
+// reads the tgf file and builds the graph
+//void Dijkstra::readTGF(const std::string & filename) {
+//    
+//    std::ifstream tgfFile(filename);
+//    
+//    if(!tgfFile.is_open()) {
+//        std::cerr << "Could not open the file: " << filename << std::endl;
+//    }
+//    
+//    // which part of the file; false = first part; true = second part
+//    bool part = false;
+//    
+//    // linebuffer
+//    std::string linebuffer;
+//    
+//    // count the elements of the file
+//    counter = 0;
+//    
+//    // read every line
+//    while(std::getline(tgfFile, linebuffer)) {
+//        
+//        // if a # is read
+//        if(linebuffer.substr(0, 1) == "#") {
+//            part = true;
+//            graph.resize(counter);
+//        }
+//        
+//        else {
+//            std::istringstream split(linebuffer);
+//            std::vector<std::string> tokens;
+//            
+//            if(part) {
+//                // save the lines in the graph
+//                for(std::string each; std::getline(split, each, ' '); tokens.push_back(each));
+//                
+//                int id1 = atoi(tokens[0].c_str());
+//                int id2 = atoi(tokens[1].c_str());
+//                float weight = atof(tokens[2].c_str());
+//                
+//                graph[id1].push_back(std::make_pair(id2, weight));
+//            }
+//            
+//            else {
+//                ++counter;
+//            }
+//        }
+//    }
+//    
+//    tgfFile.close();
+//}
+void Dijkstra::buildGraph(std::vector<std::vector<graphPair> > &fromMesh)
 {
 	counter = fromMesh.size();
 	graph.resize(counter);
 	int i = 0;
-	for (std::vector<std::vector<GraphPair> >::iterator iter = fromMesh.begin(); iter != fromMesh.end(); iter++)
+	for (std::vector<std::vector<graphPair> >::iterator iter = fromMesh.begin(); iter != fromMesh.end(); iter++)
 	{
 		graph[i] = *iter;
 		//G_vertices.insert(std::unordered_map<int, const std::unordered_map<int, double>>::value_type((*f_it).idx(), G_edges));
@@ -104,3 +154,38 @@ void Dijkstra::printPath(const int & target) {
     
     std::cout << std::endl;
 }
+
+// runs the program and calls the functions
+//void Dijkstra::program(int argc, char * argv[]) {
+//    
+//    // argc = 4 because the argv at position 0 is the program itself
+//    if(argc != 4) {
+//        std::cout << "Dijkstra needs 3 parameters:\n     inputfile in tgf format\n     source\n     target";
+//    }
+//    
+//    std::string filename = argv[1];
+//    int source = atoi(argv[2]);
+//    int target = atoi(argv[3]);
+//    
+//    // license
+//    license();
+//    
+//    // read the tgf file
+//    readTGF(filename);
+//    
+//    // initalization of distance and parent vector
+//    initialization(source);
+//    
+//    // compute the distances (dijkstra)
+//    computeDistances(target);
+//    
+//    // create the path and prints it out
+//    if(createPath(source, target)) {
+//        printPath(target);
+//    }
+//    
+//    else {
+//        std::cout << "no path" << std::endl;
+//    }
+//    
+//}
