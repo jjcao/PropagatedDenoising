@@ -8,59 +8,33 @@
 
 	jjcao @ 2016
 */
-#include <iostream>
-#include <queue>
 #include <vector>
-#include <sstream>
-#include <fstream>
-#include <algorithm>
-#include <limits>
-#include <queue>
 
+typedef std::pair<int, double> GraphPair; 
+typedef std::vector<std::vector<GraphPair> > AdjacencyList;// GraphPair means <index of the node, weight between the node and ... >
 
-typedef std::pair<int, double> GraphPair;
-typedef std::vector<std::vector<GraphPair> > AdjacencyList;
-
-class Dijkstra {
+class Dijkstra
+{
 public:
-    // variables
-    AdjacencyList graph;
+	// call it first before call computePath()
+	void computeDistances(const AdjacencyList & graph, const int & source, std::vector<double> &distance, const int & target = -1);
+	// compute path from target to source
+	void computePath(const AdjacencyList & graph, const int & target, std::vector<int> & path);
 
-    std::vector<double> distance;
-    std::vector<int> parent;
-    std::vector<int> path;
-    
-    unsigned counter;
+private:
 
-	void buildGraph(AdjacencyList &fromMesh);
-    
-    void initialization(const int & source);
-    
-    void computeDistances(const int & target);
-    
-    bool createPath(const int & source, const int & target);
-    
-    void printPath(const int & target);
-    
-    // comperator
-    struct Comperator {
-        int operator() (const GraphPair & pair1, const GraphPair & pair2) {
-            return pair1.second > pair2.second;
-        }
-    };
-    
-    std::priority_queue<GraphPair, std::vector<GraphPair>, Comperator> priorityQueue;
+	struct Greater {
+		bool operator() (const GraphPair & pair1, const GraphPair & pair2) {
+			return pair1.second > pair2.second;
+		}
+	};
+	struct Less {
+		bool operator()(const GraphPair & pair1, const GraphPair & pair2) {
+			return pair1.second < pair2.second;
+		}
+	};
 
-    
-//public:
-//	~Dijkstra()
-//	{
-//		graph.clear();
-//		distance.clear();
-//		parent.clear();
-//		path.clear();
-//		counter = 0;
-//	}
+	AdjacencyList _distanceGraph; // GraphPair means <index of the node, shortest distance of the node>
 };
 
 #endif

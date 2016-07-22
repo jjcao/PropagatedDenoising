@@ -1,27 +1,10 @@
 #include"ShortestPropagationMeshFiltering.h"
 #include<iostream>
-#include "Eigen/Sparse"
+//#include <limits>
+//#include <algorithm>
+//#include "Eigen/Dense"
+//#include "Eigen/Sparse"
 
-int match_number(std::vector<int> &localFaceIdx, int value)
-{
-	int i = 0;
-	for (std::vector<int>::iterator iter = localFaceIdx.begin(); iter != localFaceIdx.end(); iter++)
-	{
-		if (*iter == value)
-			return i;
-		else
-			i++;
-	}
-	return -1;
-}
-void match_face_path(std::vector<int> &localFaceIdx, std::vector<int> &face_path, std::vector<int> &match_facep)
-{
-	match_facep.clear();
-	for (std::vector<int>::iterator iter = face_path.begin(); iter != face_path.end(); iter++)
-	{
-		match_facep.push_back(localFaceIdx[*iter]);
-	}
-}
 void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals)
 {
 	filtered_normals.resize((int)mesh.n_faces());
@@ -82,41 +65,38 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 
 			//---------------------------------------得到局部图-------------------------------------
 			AdjacencyList localGraph;
-			std::vector<int> localFaceIdx;
-			buildLocalGraph(mesh, face_neighbor, localGraph, localFaceIdx);
-			
+			std::vector<int> local2GlobalIdx;
+			std::map<int, int> global2localIdx;
+			buildLocalGraph(mesh, face_neighbor, localGraph, local2GlobalIdx, global2localIdx);
+			Dijkstra dij;
+			std::vector<double> distance;
+			dij.computeDistances(localGraph, global2localIdx[index], distance);
 			//--------------------------------------------------------------------------------------
 
 			TriMesh::Normal filtered_normal(0.0, 0.0, 0.0);
-			for (int j = 0; j < (int)face_neighbor.size(); j++)
+			for (int j = 0; j < (int)face_neighbor.size(); ++j)
 			{
-				int current_face_index = face_neighbor[j].idx();
-				//TriMesh::Normal direct_center = (face_centroid[index] - face_centroid[current_face_index]).normalize();
-				std::vector<int> face_path;
+				int currentIdx = face_neighbor[j].idx();
+				//TriMesh::Normal direct_center = (face_centroid[index] - face_centroid[currentIdx]).normalize();
+				std::vector<int> facePath;
 				double weight = 0.0;
 				if (face_neighbor[j] != *f_it)
-				{
-					int source = match_number(localFaceIdx, (*f_it).idx());
-					int target = match_number(localFaceIdx, (face_neighbor[j]).idx());
-					Dijkstra mesh_graph;
-					dijkstraPath3(localGraph, mesh_graph, source, target, face_path);
-					std::vector<int> match_facep;
-					match_face_path(localFaceIdx, face_path, match_facep);
-					face_path.swap(match_facep);
+				{	
+					dij.computePath(localGraph, global2localIdx[currentIdx], facePath);
 
 					double sumPF1 = 0.0, sumPF2 = 0.0;
 					//前后两项的法线差异
-					for (int k = (int)face_path.size() - 1; k > 0; k--)
+					for (int k = (int)facePath.size() - 1; k > 0; --k)
 					{
-						int preIndex = face_path[k];
-						int nexIndex = face_path[k - 1];
+						int preIndex = facePath[k];
+						int nexIndex = facePath[k - 1];
 						double temp11 = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
 						sumPF1 += temp11*temp11;
 					}
 					//累积路径差异
-					for (int k = (int)face_path.size() - 1; k >= 0; k--)
+					for (int k = (int)facePath.size() - 1; k >= 0; k--)
 					{
-						int currentIndex = face_path[k];
+						int currentIndex = facePath[k];
 						double temp22 = (previous_normals[currentIndex] - previous_normals[index]).length();
 						sumPF2 += temp22*temp22;
 					}
@@ -128,7 +108,7 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 				{
 					weight = 1.0;
 				}
-				filtered_normal += weight * face_area[current_face_index] * previous_normals[current_face_index];
+				filtered_normal += weight * face_area[currentIdx] * previous_normals[currentIdx];
 			}
 			if (face_neighbor.size())
 				filtered_normals[index] = filtered_normal.normalize();
@@ -245,18 +225,20 @@ double ShortestPropagationMeshFiltering::getSigmaS(double multiple, std::vector<
 }
 
 void ShortestPropagationMeshFiltering::buildLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> face_neighbor, 
-	AdjacencyList &localGraph, std::vector<int> &localFaceIdx)
+	AdjacencyList &localGraph, std::vector<int>& local2GlobalIdx, std::map<int, int>& global2localIdx)
 {
-	localFaceIdx.clear();
+	local2GlobalIdx.clear(); global2localIdx.clear();
 	localGraph.clear(); 
 	localGraph.resize(face_neighbor.size());
 
-	for (std::vector<TriMesh::FaceHandle>::iterator iter = face_neighbor.begin(); iter != face_neighbor.end(); ++iter)
+	int i(0);
+	for (std::vector<TriMesh::FaceHandle>::iterator iter = face_neighbor.begin(); iter != face_neighbor.end(); ++iter, ++i)
 	{
-		localFaceIdx.push_back(iter->idx());
+		local2GlobalIdx.push_back(iter->idx());
+		global2localIdx.insert(std::make_pair(iter->idx(),i));
 	}
 		
-	int i(0);
+	i=0;
 	for (std::vector<TriMesh::FaceHandle>::iterator iter = face_neighbor.begin(); iter != face_neighbor.end(); ++iter, ++i)
 	{
 		TriMesh::Point c1 = mesh.calc_face_centroid(*iter);
@@ -267,70 +249,8 @@ void ShortestPropagationMeshFiltering::buildLocalGraph(TriMesh &mesh, std::vecto
 		for (std::vector<TriMesh::FaceHandle>::iterator it = locFaceNeighbor.begin(); it != locFaceNeighbor.end(); ++it)
 		{
 			TriMesh::Point c2 = mesh.calc_face_centroid(*it);
-			std::vector<int>::iterator iit = std::find(localFaceIdx.begin(), localFaceIdx.end(), it->idx());
-			if (localFaceIdx.end() != iit)
-				localGraph[i].push_back(std::make_pair(iit - localFaceIdx.begin(), (c1 - c2).length())); // todo to be debugged 
+			localGraph[i].push_back(std::make_pair(global2localIdx[it->idx()], (c1 - c2).length())); 
 		}
 	}
-}
-
-void ShortestPropagationMeshFiltering::dijkstraPath3(std::vector<std::vector<GraphPair> > &localGraph, Dijkstra mesh_graph, int source, int target, std::vector<int> &face_path)
-{
-	face_path.clear();
-	//Dijkstra mesh_graph;
-	mesh_graph.buildGraph(localGraph);
-	mesh_graph.initialization(source);
-	mesh_graph.computeDistances(target);
-	mesh_graph.createPath(source, target);
-	//face_path = mesh_graph.path;
-	for (std::vector<int>::iterator iter = mesh_graph.path.begin(); iter != mesh_graph.path.end(); iter++)
-	{
-		face_path.push_back(*iter);
-	}
-}
-
-
-void ShortestPropagationMeshFiltering::choosePath(TriMesh &mesh, FaceNeighborType face_neighbor_type,
-	TriMesh::FaceHandle fh_start, TriMesh::FaceHandle fh_end, TriMesh::Normal direct_center,
-	std::vector<TriMesh::FaceHandle> &face_path)
-{
-	face_path.clear();
-	face_path.push_back(fh_start);
-	std::vector<TriMesh::Point> face_centroid((int)mesh.n_faces());
-	getFaceCentroid(mesh, face_centroid);
-	int index_end = fh_end.idx();
-	bool bad_path = false;
-
-	while (fh_start != fh_end)
-	{
-		std::vector<TriMesh::FaceHandle> face_neighbor_cycle;
-		face_neighbor_cycle.clear();
-		getFaceNeighbor(mesh, fh_start, kVertexBased, face_neighbor_cycle);
-
-		//find the minimum angle have some question, emerging exceed the goal
-		//apply the minimum distance
-
-		int index_start = fh_start.idx();
-		double minDistance = 1e6;
-
-		TriMesh::FaceHandle mid_fh;
-		for (int i = 0; i < (int)face_neighbor_cycle.size(); i++)
-		{
-			int index_mid = face_neighbor_cycle[i].idx();
-			double value_mid = (face_centroid[index_mid] - face_centroid[index_end]).length();
-			if (value_mid < minDistance)
-			{
-				minDistance = value_mid;
-				mid_fh = face_neighbor_cycle[i];
-			}
-
-		}
-		face_path.push_back(mid_fh);
-		fh_start = mid_fh;
-		if (face_path.size() > 10)
-			break;
-
-	}
-
 }
 
