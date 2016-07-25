@@ -54,6 +54,8 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 	//getAllFaceNeighborAdjacencyList(mesh, all_face_neighbor, all_face_neighbor_adja_list);
 	for (int iter = 0; iter < normal_iteration_number; ++iter)
 	{
+		std::cout << "iteration: " << iter << std::endl;
+
 		getFaceCentroid(mesh, face_centroid);
 		getFaceArea(mesh, face_area);
 		getFaceNormal(mesh, previous_normals);
@@ -83,6 +85,8 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 				if (face_neighbor[j] != *f_it)
 				{	
 					dij.computePath(localGraph, global2localIdx[currentIdx], facePath);
+					for (int k = 0; k < facePath.size(); ++k)
+						facePath[k] = local2GlobalIdx[facePath[k]];
 
 					double sumPF1 = 0.0, sumPF2 = 0.0;
 					//前后两项的法线差异
