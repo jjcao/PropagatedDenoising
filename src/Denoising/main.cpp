@@ -3,6 +3,7 @@
 #include <QCommandLineParser>
 #include <QFileInfo> 
 #include <iostream>
+#include <QElapsedTimer>
 #include "DenoisingFacade.h"
 
 using std::cout; using std::endl;
@@ -77,7 +78,9 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 	else
-		cout << "Loading mesh " << inFilePath.toStdString() << " successful." << endl;
+	{
+		cout << "Loading mesh " << inFilePath.toStdString() << ", num of faces: " << dm.getOriginalMesh().n_faces() << endl;
+	}
 	
 
 	////////////////////////////////////////////////////////////
@@ -143,11 +146,15 @@ int main(int argc, char *argv[])
 	////////////////////////////////////////////////////////////
 	////       compute  and  output    //////////////////////////////////
 	////////////////////////////////////////////////////////////	
+	QElapsedTimer timer;
+	timer.start();
 	df.run();
+	std::cout << "time elapsed: " << timer.elapsed() << std::endl;
+
 	if (DenoisingFacade::kNoise == df.getAlgorithmType())
 		dm.MeshToNoisyMesh();
 	else
-		dm.MeshToDenoisedMesh();
+		dm.MeshToDenoisedMesh();	
 
 	QString outFilePath(outDir + '/' + finfo.baseName() + "_result." + finfo.suffix());
 	if (!dm.ExportMeshToFile(outFilePath.toStdString()) )

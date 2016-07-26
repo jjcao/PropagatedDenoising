@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = Denoising
 DESTDIR = ../Win32/Debug
 QT += core
-CONFIG += debug console
+CONFIG += debug release console
 DEFINES += QT_DLL \
            _USE_MATH_DEFINES
 
@@ -19,6 +19,12 @@ RCC_DIR += ./GeneratedFiles
 INCLUDEPATH += . \
     ..
 
-LIBS += "../OpenMesh/OpenMesh.lib"
+
+CONFIG(debug, debug|release) {
+      LIBS += "../OpenMesh/OpenMeshD.lib"
+  } else {
+      LIBS += "../OpenMesh/OpenMesh.lib"
+  }
+
 
 include(Denoising.pri)

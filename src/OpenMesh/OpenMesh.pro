@@ -1,5 +1,10 @@
 CONFIG -= qt
-TARGET = OpenMesh
+CONFIG(debug,debug|release) {
+      TARGET = OpenMeshD
+  } else {
+      TARGET = OpenMesh
+  }
+
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG += c++11

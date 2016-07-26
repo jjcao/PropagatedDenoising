@@ -34,7 +34,8 @@ private:
 		}
 	};
 
-	AdjacencyList _distanceGraph; // GraphPair means <index of the node, shortest distance of the node>
+	// Here, the meaning of GraphPair is <index of the node, shortest distance of the node>, which is different with its default meaning.
+	AdjacencyList _distanceGraph; 
 };
 
 #endif
