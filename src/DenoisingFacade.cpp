@@ -8,6 +8,8 @@
 #include "Algorithms/GuidedMeshNormalFiltering.h"
 #include "Algorithms/ShortestPropagationMeshFiltering.h"
 #include "Algorithms/dijkstra.h"
+#include "Algorithms/ProjectivePropagationMeshFiltering.h"
+#include "Algorithms/seg_sort.h"
 
 using std::pair;
 //enum AlgorithmsType {
@@ -29,6 +31,7 @@ DenoisingFacade::DenoisingFacade()
 	algorithms_dictionary_.insert(std::make_pair("MeshDenoisingViaL0Minimization", AlgorithmsType::kMeshDenoisingViaL0Minimization));
 	algorithms_dictionary_.insert(std::make_pair("GuidedMeshNormalFiltering", AlgorithmsType::kGuidedMeshNormalFiltering));
 	algorithms_dictionary_.insert(std::make_pair("ShortestPropagationMeshFiltering", AlgorithmsType::kShortestPropagationMeshFiltering));
+	algorithms_dictionary_.insert(std::make_pair("ProjectivePropagationMeshFiltering", AlgorithmsType::kProjectivePropagationMeshFiltering));
 	
 	//Noise 可选参数
 	noise_type_dictionary_.insert(std::make_pair("Gaussian", Noise::NoiseType::kGaussian));
@@ -72,6 +75,9 @@ void DenoisingFacade::initAlgorithm(DataManager *_data_manager, ParameterSet *_p
 		break;
 	case kShortestPropagationMeshFiltering:
 		mesh_denoise_base_ = new ShortestPropagationMeshFiltering(_data_manager, _parameter_set);
+		break;
+	case kProjectivePropagationMeshFiltering:
+		mesh_denoise_base_ = new ProjectivePropagationMeshFiltering(_data_manager, _parameter_set);
 		break;
 	default:
 		break;

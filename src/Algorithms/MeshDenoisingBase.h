@@ -37,19 +37,25 @@ protected:
     void getFaceArea(TriMesh &mesh, std::vector<double> &area);
     void getFaceCentroid(TriMesh &mesh, std::vector<TriMesh::Point> &centroid);
 	void getFaceNormal(TriMesh &mesh, std::vector<TriMesh::Normal> &normals);
-
+	void checkBadFace(TriMesh &mesh);
 
 	/////////////////////////////////////////////////////////////////
     // two stage method, first update normals, second update vertices
 	/////////////////////////////////////////////////////////////////    
     void getFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, FaceNeighborType face_neighbor_type, 
 		std::vector<TriMesh::FaceHandle> &face_neighbor, double radius = 0.0);
+	void getFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, FaceNeighborType face_neighbor_type,
+		std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, double radius = 0.0);
+
     void getAllFaceNeighbor(TriMesh &mesh, std::vector< std::vector<TriMesh::FaceHandle> > &all_face_neighbor, 
-		FaceNeighborType face_neighbor_type = kVertexBased, bool include_central_face = false, double radius=0.0);    
+		FaceNeighborType face_neighbor_type = kVertexBased, bool include_central_face = false, double radius=0.0);
+	void getAllFaceNeighbor(TriMesh &mesh, std::vector< std::vector<std::vector<TriMesh::FaceHandle> > > &all_face_neighbor,
+		FaceNeighborType face_neighbor_type = kFaceRingBased, bool include_central_face = false, double radius = 0.0);
 
 private:
 	void getVertexBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, std::vector<TriMesh::FaceHandle> &face_neighbor);
 	void getRadiusBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, double radius, std::vector<TriMesh::FaceHandle> &face_neighbor);
+	void getFaceRingBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, double radius, std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor);
 
 public:
     DataManager *data_manager_;

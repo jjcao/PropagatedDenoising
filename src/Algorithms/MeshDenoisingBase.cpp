@@ -1,5 +1,6 @@
 #include "MeshDenoisingBase.h"
 #include <queue>
+
 MeshDenoisingBase::MeshDenoisingBase(DataManager *_data_manager, ParameterSet *_parameter_set)
 {
     if((_data_manager == NULL) || (_parameter_set == NULL))
@@ -82,6 +83,40 @@ void MeshDenoisingBase::getFaceNormal(TriMesh &mesh, std::vector<TriMesh::Normal
         normals[f_it->idx()] = n;
     }
 }
+
+void MeshDenoisingBase::checkBadFace(TriMesh &mesh)
+{
+	for (TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
+	{
+		std::vector<TriMesh::Point> point;
+		point.resize(3); int index = 0;
+		for (TriMesh::FaceVertexIter fv_it = mesh.fv_iter(*f_it); fv_it.is_valid(); fv_it++)
+		{
+			point[index] = mesh.point(*fv_it);
+			index++;
+		}
+
+		TriMesh::Point edge1 = point[1] - point[0];
+		TriMesh::Point edge2 = point[1] - point[2];
+		double S = 0.5 * (edge1 % edge2).length();
+
+		if (S < 1e-20)
+		{
+			TriMesh::Point disturb1(1e-7, 1e-8, 1e-9);
+			TriMesh::Point disturb2(1e-8, 1e-7, 1e-9);
+			TriMesh::Point disturb3(1e-9, 1e-8, 1e-7);
+			std::vector<TriMesh::Point> points;
+			points.push_back(disturb1); points.push_back(disturb2); points.push_back(disturb3);
+			int i = 0;
+			for (TriMesh::FaceVertexIter fv_it_bad = mesh.fv_iter(*f_it); fv_it_bad.is_valid(); fv_it_bad++)
+			{
+				mesh.set_point(*fv_it_bad, point[i] + points[i]);
+				i++;
+			}
+		}
+	}
+}
+
 void MeshDenoisingBase::getVertexBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, std::vector<TriMesh::FaceHandle> &face_neighbor)
 {
 	face_neighbor.clear();
@@ -118,7 +153,7 @@ void MeshDenoisingBase::getRadiusBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceH
 		if (temp_face_handle_queue != fh)
 			face_neighbor.push_back(temp_face_handle_queue);
 		queue_face_handle.pop();
-		getFaceNeighbor(mesh, temp_face_handle_queue, kVertexBased, temp_face_neighbor);
+		getFaceNeighbor(mesh, temp_face_handle_queue, kEdgeBased, temp_face_neighbor);
 		for (int i = 0; i < (int)temp_face_neighbor.size(); i++)
 		{
 			TriMesh::FaceHandle temp_face_handle = temp_face_neighbor[i];
@@ -133,6 +168,46 @@ void MeshDenoisingBase::getRadiusBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceH
 		}
 	}
 }
+void MeshDenoisingBase::getFaceRingBasedFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, double radius, std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor)
+{
+	face_neighbor.clear();
+
+	//含中心面片(在第0层)，第一层就是第一环
+	std::vector<bool> flag((int)mesh.n_faces(), false);
+	//第0层
+	std::vector<TriMesh::FaceHandle> face_ring_neighbor;
+	face_ring_neighbor.push_back(fh);
+	face_neighbor.push_back(face_ring_neighbor);
+
+	std::vector<TriMesh::FaceHandle> test_face_ring_neighbor = face_ring_neighbor;
+	for (int ring = 1; ring <= radius; ring++)
+	{
+
+		std::vector<TriMesh::FaceHandle> temp_face_ring_neighbor;
+		for (int i = 0; i < test_face_ring_neighbor.size(); i++)
+		{
+			std::vector<TriMesh::FaceHandle> temp1_fh;
+			getVertexBasedFaceNeighbor(mesh, test_face_ring_neighbor[i], temp1_fh);
+			//getEdgeBasedFaceNeighbor(mesh, test_face_ring_neighbor[i], temp1_fh);
+			for (int j = 0; j < temp1_fh.size(); j++)
+			{
+				TriMesh::FaceHandle temp_test = temp1_fh[j];
+				if (!flag[temp_test.idx()])
+				{
+					temp_face_ring_neighbor.push_back(temp_test);
+					flag[temp_test.idx()] = true;
+				}
+			}
+
+		}
+		face_neighbor.push_back(temp_face_ring_neighbor);
+
+		test_face_ring_neighbor.clear();
+		test_face_ring_neighbor = temp_face_ring_neighbor;
+
+	}
+}
+
 void MeshDenoisingBase::getFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, FaceNeighborType face_neighbor_type, 
 	std::vector<TriMesh::FaceHandle> &face_neighbor, double radius)
 {
@@ -156,6 +231,11 @@ void MeshDenoisingBase::getFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, F
 		assert(false);//not implemented
 	}
 }
+void MeshDenoisingBase::getFaceNeighbor(TriMesh &mesh, TriMesh::FaceHandle fh, FaceNeighborType face_neighbor_type,
+	std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, double radius)
+{
+	getFaceRingBasedFaceNeighbor(mesh, fh, radius, face_neighbor);
+}
 
 void MeshDenoisingBase::getAllFaceNeighbor(TriMesh &mesh, std::vector<std::vector<TriMesh::FaceHandle> > &all_face_neighbor, 
 	FaceNeighborType face_neighbor_type, bool include_central_face, double radius)
@@ -169,7 +249,18 @@ void MeshDenoisingBase::getAllFaceNeighbor(TriMesh &mesh, std::vector<std::vecto
         all_face_neighbor[f_it->idx()] = face_neighbor;
     }
 }
-
+void MeshDenoisingBase::getAllFaceNeighbor(TriMesh &mesh, std::vector< std::vector<std::vector<TriMesh::FaceHandle> > > &all_face_neighbor,
+	FaceNeighborType face_neighbor_type, bool include_central_face, double radius)
+{
+	all_face_neighbor.resize(mesh.n_faces());
+	for (TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
+	{
+		std::vector< std::vector<TriMesh::FaceHandle> > face_neighbor;
+		getFaceNeighbor(mesh, *f_it, face_neighbor_type, face_neighbor, radius);
+		all_face_neighbor[f_it->idx()] = face_neighbor;
+		// include_centeral_face have already in face_neighbor
+	}
+}
 void MeshDenoisingBase::updateVertexPosition(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals, int iteration_number, bool fixed_boundary)
 {
     std::vector<TriMesh::Point> new_points(mesh.n_vertices());

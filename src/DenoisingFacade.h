@@ -19,7 +19,7 @@ public:
 		kBilateralMeshDenoising,                         kNonIterativeFeaturePreservingMeshFiltering,
 		kFastAndEffectiveFeaturePreservingMeshDenoising, kBilateralNormalFilteringForMeshDenoising,
 		kMeshDenoisingViaL0Minimization,                 kGuidedMeshNormalFiltering,
-		kShortestPropagationMeshFiltering
+		kShortestPropagationMeshFiltering,               kProjectivePropagationMeshFiltering
 	};
 
 	void initAlgorithm(DataManager *_data_manager, ParameterSet *_parameter_set); 
