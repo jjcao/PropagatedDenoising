@@ -226,3 +226,23 @@ double PropagationMeshFiltering::getSigmaS(double multiple, std::vector<TriMesh:
 	}
 	return sigma_s * multiple / num;
 }
+//double PropagationMeshFiltering::calculateSigma(std::vector<TriMesh::Normal> &face_normals, std::vector<TriMesh::FaceHandle> &faceNeighbor, double smoothness)
+//{
+//	//自适应局部区域的法线情况，计算法线的方差，用方差来作为高斯的方差，（注高斯函数中的sigma是标准差）
+//	TriMesh::Normal aver_local_normal(0.0, 0.0, 0.0);
+//	int len = faceNeighbor.size();
+//	for (int st = 0; st < len; st++)
+//	{
+//		aver_local_normal += face_normals[faceNeighbor[st].idx()];
+//	}
+//	aver_local_normal = aver_local_normal / len;
+//
+//	double stdard = 0.0;
+//	for (int st = 0; st < len; st++)
+//	{
+//		double dtemp = (aver_local_normal - face_normals[faceNeighbor[st].idx()]).length();
+//		stdard += dtemp * dtemp;
+//		//stdard += NormalDistance(aver_local_normal, previous_normals[projections[i][st].face_index]);
+//	}
+//	return sqrt(stdard / len) + smoothness;//sigma_s替代， 作为光滑的参数
+//}

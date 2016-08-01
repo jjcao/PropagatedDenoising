@@ -41,6 +41,27 @@ void ShortestPropagationMeshFiltering::computeGlobalPath(int targetIdxGlobal, st
 		facePath[k] = _local2GlobalIdx[facePath[k]];
 }
 
+double ShortestPropagationMeshFiltering::calculateSigma(std::vector<TriMesh::Normal> &face_normals, std::vector<TriMesh::FaceHandle> &faceNeighbor, double smoothness)
+{
+	//自适应局部区域的法线情况，计算法线的方差，用方差来作为高斯的方差，（注高斯函数中的sigma是标准差）
+	TriMesh::Normal aver_local_normal(0.0, 0.0, 0.0);
+	int len = faceNeighbor.size();
+	for (int st = 0; st < len; st++)
+	{
+		aver_local_normal += face_normals[faceNeighbor[st].idx()];
+	}
+	aver_local_normal = aver_local_normal / len;
+
+	double stdard = 0.0;
+	for (int st = 0; st < len; st++)
+	{
+		double dtemp = (aver_local_normal - face_normals[faceNeighbor[st].idx()]).length();
+		stdard += dtemp * dtemp;
+		//stdard += NormalDistance(aver_local_normal, previous_normals[projections[i][st].face_index]);
+	}
+	return sqrt(stdard / len) + smoothness;//sigma_s替代， 作为光滑的参数
+}
+
 void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals)
 {
 	filtered_normals.resize((int)mesh.n_faces());
@@ -103,6 +124,7 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 			std::vector<TriMesh::FaceHandle> faceNeighbor = all_face_neighbor[index];
 
 			initLocalGraph(mesh, faceNeighbor, index);
+			double sigma_r = calculateSigma(previous_normals, faceNeighbor, sigma_s);
 
 			TriMesh::Normal filteredNormal(0.0, 0.0, 0.0);
 			for (int j = 0; j < (int)faceNeighbor.size(); ++j)
@@ -134,7 +156,7 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 
 					//double sigmaA = 1, sigmaR = 1;
 					//得到SigmaS 和SigmaR(//SigmaR指的是法向差的范围，这个没有给出某种统计值，指导的这篇默认用的是0.35	//)
-					weight = GaussianWeight(sqrt(sumPF1), sigma_s) * GaussianWeight(sqrt(sumPF2), sigma_r);
+					weight = GaussianWeight(sqrt(sumPF1), sigma_r) * GaussianWeight(sqrt(sumPF2), sigma_r);
 				}
 				else
 				{
@@ -150,11 +172,11 @@ void ShortestPropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh 
 		updateVertexPosition(mesh, filtered_normals, vertex_iteration_number, false);
 
 		////
-		if (iter % 4 == 0)
-		{
-			data_manager_->setMesh(mesh);
-			std::stringstream ss;  ss << iter << ".obj";
-			data_manager_->ExportMeshToFile(ss.str());
-		}
+		//if (iter % 4 == 0)
+		//{
+		//	data_manager_->setMesh(mesh);
+		//	std::stringstream ss;  ss << iter << ".obj";
+		//	data_manager_->ExportMeshToFile(ss.str());
+		//}
 	}
 }

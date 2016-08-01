@@ -17,6 +17,8 @@ private:
 
 	virtual void updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals);
 
+	double calculateSigma(std::vector<TriMesh::Normal> &face_normals, std::vector<TriMesh::FaceHandle> &faceNeighbor, double smoothness);
+
 	Dijkstra _dij;
 	AdjacencyList _localGraph;	
 

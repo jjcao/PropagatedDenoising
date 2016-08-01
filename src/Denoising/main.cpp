@@ -158,7 +158,8 @@ int main(int argc, char *argv[])
 	else
 		dm.MeshToDenoisedMesh();	
 
-	QString outFilePath(outDir + '/' + finfo.baseName() + "_result." + finfo.suffix());
+	//QString outFilePath(outDir + '/' + finfo.baseName() + "_result." + finfo.suffix());
+	QString outFilePath(outDir + "." + finfo.suffix());
 	if (!dm.ExportMeshToFile(outFilePath.toStdString()) )
 	{
 		cout << "Writing mesh " << outFilePath.toStdString() << " failed." << endl;;

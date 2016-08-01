@@ -29,5 +29,6 @@ private:
 	
 	//网格上所有面之间的面心距离的平均值的倍数，作为衡量基准，	//一般取一倍，所以值就是面心距离的平均值
 	double getSigmaS(double multiple, std::vector<TriMesh::Point> &centroid, TriMesh &mesh);	
+	//double calculateSigma(std::vector<TriMesh::Normal> &face_normals, std::vector<TriMesh::FaceHandle> &faceNeighbor, double smoothness);
 };
 
