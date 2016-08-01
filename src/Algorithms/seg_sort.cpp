@@ -141,6 +141,37 @@ void Segmen::calculateSort()
 	}
 }
 
+double Segmen::calculateAdaptiveSigma(const std::vector<TriMesh::Normal> &face_normals, double smoothness)
+{
+	TriMesh::Normal aver_local_normal(0.0, 0.0, 0.0);
+	double minsigma = 10;
+	
+	for (int num = 0; num < regions.size(); ++num)
+	{
+		int len = regions[num].size();
+		if (len > 1)
+		{
+			for (int st = 0; st < len; ++st)
+			{
+				aver_local_normal += face_normals[regions[num][st].face_index];
+			}
+			aver_local_normal = aver_local_normal / len;
+
+			double stdard = 0.0;
+			for (int st = 0; st < len; st++)
+			{
+				double dtemp = (aver_local_normal - face_normals[regions[num][st].face_index]).length();
+				stdard += dtemp * dtemp;
+			}
+			stdard = sqrt(stdard / len) + smoothness;//作为光滑的参数
+
+			if (minsigma > stdard)
+				minsigma = stdard;
+		}
+	}
+	return minsigma;
+}
+
 void Segmen::midPath(int mid, int centerf_index, std::vector<Projection> &region, std::vector<int> &path)
 {
 	path.clear();
@@ -255,7 +286,7 @@ void Segmen::calculateAllPath(int centerf_index, std::vector<Pathmark> &paths)
 			++number;
 		}
 	}
-	projection_sets.clear();
-	regions.clear();
+	//projection_sets.clear();
+	//regions.clear();
 }
 

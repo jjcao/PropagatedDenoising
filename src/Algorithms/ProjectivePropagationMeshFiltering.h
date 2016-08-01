@@ -12,17 +12,13 @@ public:
 
 private:
 	/*the first two parameters define the original points, the third parameter define the projectoin normal, the last is used to calculating the dist*/
-	void calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, const std::vector<TriMesh::Point> &face_centroid, 
-		const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, const std::vector<TriMesh::Point> &fpoint,
-		std::vector<Pathmark> &pathms);
+	void calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, 
+		const std::vector<TriMesh::Point> &face_centroid, const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, 
+		const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms);
 
-	/*the first two parameters define the original points, the third parameter define the projectoin normal, the last is used to calculating the dist*/
-	void calculateGlobalPath(const std::vector<TriMesh::FaceHandle> &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,
-		const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, const std::vector<TriMesh::Point> &fpoint,
-		std::vector<Pathmark> &pathms);
+	double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, double smoothness);
 
 	virtual void updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals);
-
 
 	virtual void initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, int sourceIdxGlobal)
 	{

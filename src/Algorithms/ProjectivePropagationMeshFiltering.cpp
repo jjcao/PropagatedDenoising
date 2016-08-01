@@ -35,15 +35,7 @@ void ProjectivePropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMes
 	if (face_neighbor_type == kRadiusBased)
 		radius = getAveragefaceCenterDistance(mesh) * multiple_radius;
 
-	//--------RadiusBased-------//
-	//////////////////////////////
-	//////////////////////////////
-	//std::vector<std::vector<TriMesh::FaceHandle> > all_face_neighbor((int)mesh.n_faces());
-	//getAllFaceNeighbor(mesh, all_face_neighbor, face_neighbor_type, include_central_face, radius);
-
 	//--------FaceRingBased------//
-	///////////////////////////////
-	///////////////////////////////
 	std::vector< std::vector<std::vector<TriMesh::FaceHandle> > > all_face_neighbor((int)mesh.n_faces());
 	getAllFaceNeighbor(mesh, all_face_neighbor, face_neighbor_type, include_central_face, radius);
 
@@ -54,22 +46,16 @@ void ProjectivePropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMes
 	std::vector<TriMesh::Point> face_centroid((int)mesh.n_faces());
 	std::vector<TriMesh::Normal> previous_normals((int)mesh.n_faces());//上一次的法线
 
-	//////---- record the std,
-	////std::ofstream fout("graph.txt");
 
 	for (int iter = 0; iter < normal_iteration_number; iter++)
 	{
 		std::cout << "iteration: " << iter << std::endl;
-
 		getFaceCentroid(mesh, face_centroid);
 		getFaceArea(mesh, face_area);
-		//getFacePerimeter(mesh, face_perimeter);
 		getFaceNormal(mesh, previous_normals);//------- 这里的法线是重新求出来的，不是更新后的法线？----------
 
 		for (TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
 		{
-			TriMesh::Normal filtered_normal(0.0, 0.0, 0.0);//滤波结果初始化 
-
 			//存储当前面片的三个顶点坐标，为分区域做好准备
 			std::vector<TriMesh::Point> fpoint;
 			fpoint.resize(3); int pindex = 0;
@@ -84,20 +70,12 @@ void ProjectivePropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMes
 			TriMesh::Normal centerf_normal = previous_normals[centerf_index];
 
 			std::vector<Pathmark> pathms;
-			//--------RadiusBased-------//
-			//////////////////////////////
-			//////////////////////////////
-			//std::vector<TriMesh::FaceHandle> face_neighbor = all_face_neighbor[centerf_index];
-
-
 			//--------FaceRingBased------//
-			///////////////////////////////
-			///////////////////////////////
 			std::vector<std::vector<TriMesh::FaceHandle> > face_neighbor = all_face_neighbor[centerf_index];
-
-
-
 			calculateGlobalPath(face_neighbor, face_centroid, centerf_normal, centerf_centroid, centerf_index, fpoint, pathms);
+			sigma_r = calculateSigma(previous_normals, sigma_s);
+
+			TriMesh::Normal filtered_normal(0.0, 0.0, 0.0);//滤波结果初始化 
 			for (int i = 0; i < pathms.size(); ++i)
 			{
 				std::vector<int> onepath = pathms[i].path;
@@ -122,7 +100,7 @@ void ProjectivePropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMes
 				}
 				/*    change tomorrow   */
 
-				weight = GaussianWeight(sqrt(sumPF1), sigma_s) * GaussianWeight(sqrt(sumPF2), sigma_r);
+				weight = GaussianWeight(sqrt(sumPF1), sigma_r) * GaussianWeight(sqrt(sumPF2), sigma_r);
 				filtered_normal += weight * face_area[onepath[0]] * previous_normals[onepath[0]];
 				onepath.clear();
 			}
@@ -137,20 +115,20 @@ void ProjectivePropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMes
 		checkBadFace(mesh);//对坏的面进行微小的扰动
 
 		////
-		if (iter % 4 == 0)
-		{
-			data_manager_->setMesh(mesh);
-			std::stringstream ss;  ss << iter << ".obj";
-			data_manager_->ExportMeshToFile(ss.str());
-		}
+		//if (iter % 4 == 0)
+		//{
+		//	data_manager_->setMesh(mesh);
+		//	std::stringstream ss;  ss << iter << ".obj";
+		//	data_manager_->ExportMeshToFile(ss.str());
+		//}
 	}
 
 	//fout.close();
 }
 
-void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,
-	const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, const std::vector<TriMesh::Point> &fpoint,
-	std::vector<Pathmark> &pathms)
+void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, 
+	const std::vector<TriMesh::Point> &face_centroid, const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, 
+	const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms)
 {
 	seg.localProjection(face_neighbor, face_centroid, centerf_normal, centerf_centroid);
 	seg.segmentation(fpoint);
@@ -158,12 +136,10 @@ void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector< 
 	seg.calculateAllPath(centerf_index, pathms);
 }
 
-void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector<TriMesh::FaceHandle> &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,
-	const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, const std::vector<TriMesh::Point> &fpoint,
-	std::vector<Pathmark> &pathms)
+double ProjectivePropagationMeshFiltering::calculateSigma(const std::vector<TriMesh::Normal> &face_normals, double smoothness)
 {
-	seg.localProjection(face_neighbor, face_centroid, centerf_normal, centerf_centroid);
-	seg.segmentation(fpoint);
-	seg.calculateSort();
-	seg.calculateAllPath(centerf_index, pathms);
+	double sigma = seg.calculateAdaptiveSigma(face_normals, smoothness);
+	seg.clearSegmen();
+
+	return sigma;
 }

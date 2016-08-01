@@ -39,6 +39,14 @@ public:
 	/* calculate all paths*/
 	void calculateAllPath(int centerf_index, std::vector<Pathmark> &pathms);
 
+	// calculate adaptive sigma
+	double calculateAdaptiveSigma(const std::vector<TriMesh::Normal> &face_normals, double smoothness);
+	void clearSegmen()
+	{
+		projection_sets.clear();
+		regions.clear();
+	}
+
 private:
 	std::vector<Projection> projection_sets;
 	std::vector< std::vector<Projection> > regions;
@@ -61,6 +69,7 @@ private:
 	//{
 	//	return proc1.dist < proc2.dist;
 	//}
+
 	void calculatePath(std::vector<Projection> &region, int tail, int centerf_index, std::vector<Pathmark> &paths, Pathmark &pathm);
 	void midPath(int mid, int centerf_index, std::vector<Projection> &region, std::vector<int> &path);
 
