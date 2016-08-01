@@ -12,16 +12,16 @@ public:
 	~ShortestPropagationMeshFiltering(){}	
 
 private:
-	virtual void initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, int sourceIdxGlobal);
-	virtual void computeGlobalPath(int targetIdxGlobal, std::vector<int>& facePath);
-
-	virtual void updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals);
-
-	double calculateSigma(std::vector<TriMesh::Normal> &face_normals, std::vector<TriMesh::FaceHandle> &faceNeighbor, double smoothness);
+	virtual void setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius);
+	virtual void computeGlobalPath(TriMesh &mesh, TriMesh::FaceIter sourceFaceIter,
+		const std::vector<TriMesh::Point>& face_centroid, const std::vector<TriMesh::Normal>& face_normals, std::vector<std::vector<int> > &facePaths);
+	void initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, int sourceIdxGlobal);
+	virtual void checkBadFace(TriMesh &mesh) {};
+	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, double smoothness);
 
 	Dijkstra _dij;
 	AdjacencyList _localGraph;	
-
+	std::vector<std::vector<TriMesh::FaceHandle> > _allFaceNeighbor;
 };
 
 

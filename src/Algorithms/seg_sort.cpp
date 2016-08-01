@@ -8,7 +8,7 @@ void Segmen::localProjection(const std::vector< std::vector<TriMesh::FaceHandle>
 	projection_sets.clear();
 	for (int j = 1; j < (int)face_neighbor.size(); ++j)
 	{
-		std::vector<TriMesh::FaceHandle> face_neighbor_ring = face_neighbor[j];
+		const std::vector<TriMesh::FaceHandle> &face_neighbor_ring = face_neighbor[j];
 		for (int k = 0; k < face_neighbor_ring.size(); ++k)
 		{
 			int neighborf_index = face_neighbor_ring[k].idx();

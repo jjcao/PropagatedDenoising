@@ -37,7 +37,7 @@ protected:
     void getFaceArea(TriMesh &mesh, std::vector<double> &area);
     void getFaceCentroid(TriMesh &mesh, std::vector<TriMesh::Point> &centroid);
 	void getFaceNormal(TriMesh &mesh, std::vector<TriMesh::Normal> &normals);
-	void checkBadFace(TriMesh &mesh);
+	virtual void checkBadFace(TriMesh &mesh);
 
 	/////////////////////////////////////////////////////////////////
     // two stage method, first update normals, second update vertices
