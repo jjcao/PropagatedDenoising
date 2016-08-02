@@ -16,7 +16,7 @@ private:
 		const std::vector<TriMesh::Point> &face_centroid, const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid, int centerf_index, 
 		const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms);
 
-	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, double smoothness);
+	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, int iter, double smoothness);
 	
 	virtual void setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius);
 	// facePaths[i] is the ith path from some target to source

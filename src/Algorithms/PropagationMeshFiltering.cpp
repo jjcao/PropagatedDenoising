@@ -65,7 +65,7 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 			
 			std::vector<std::vector<int> > facePaths;
 			computeGlobalPath(mesh, f_it, face_centroid, previous_normals, facePaths);
-			sigma_r = calculateSigma(previous_normals, f_it, sigma_s);
+			sigma_r = calculateSigma(previous_normals, f_it, iter, sigma_s);
 
 
 			TriMesh::Normal filteredNormal(0.0, 0.0, 0.0);
@@ -73,36 +73,30 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 			{
 				std::vector<int> &facePath = facePaths[j];
 				int neighborIdx = facePath[0];//remember facePath[0] is neighbor!
-			
+
 				double weight = 0.0;
 				if (index != neighborIdx)
 				{
-					double sumPF1 = 0.0, sumPF2 = 0.0;
-					//前后两项的法线差异
+					double sumA = 0.0;// adjacent photometric relationship
+					double sumR = 0.0;// photometric relationship
 					for (int k = (int)facePath.size() - 1; k > 0; --k)
 					{
 						int preIndex = facePath[k];
 						int nexIndex = facePath[k - 1];
-						double temp11 = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
-						sumPF1 += temp11*temp11;
-					}
-					//累积路径差异
-					for (int k = (int)facePath.size() - 1; k >= 0; --k)
-					{
-						int tailIndex = facePath[k];
-						double temp22 = (previous_normals[tailIndex] - previous_normals[index]).length();
-						sumPF2 += temp22*temp22;
+						double distD = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
+						sumA += distD*distD;
+						double distR = (previous_normals[preIndex] - previous_normals[index]).length();
+						sumR += distR*distR;
 					}
 
 					//得到SigmaS 和SigmaR(//SigmaR指的是法向差的范围，这个没有给出某种统计值，指导的这篇默认用的是0.35	//)
-					// todo: sigma for sumPF1 should be larger than sumPF2?
-					weight = GaussianWeight(sqrt(sumPF1), sigma_r) * GaussianWeight(sqrt(sumPF2), sigma_r);
+					// todo: sigma for sumA should be larger than sumR?
+					weight = GaussianWeight(sqrt(sumA), sigma_r) * GaussianWeight(sqrt(sumR), sigma_s*sigma_r);
 				}
-				else
-				{
-					weight = 1.0;
+				else{
 					neighborIdx = index;
 				}
+
 				filteredNormal += weight * face_area[neighborIdx] * previous_normals[neighborIdx];
 			}
 
@@ -114,13 +108,13 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 
 		//checkBadFace(mesh);//对坏的面进行微小的扰动
 
-		////// for debug
-		//if (iter % 4 == 0)
-		//{
-		//	data_manager_->setMesh(mesh);
-		//	std::stringstream ss;  ss << iter << ".obj";
-		//	data_manager_->ExportMeshToFile(ss.str());
-		//}
+		// for debug
+		if (iter % 4 == 0)
+		{
+			data_manager_->setMesh(mesh);
+			std::stringstream ss;  ss << iter << ".obj";
+			data_manager_->ExportMeshToFile(ss.str());
+		}
 	}
 }
 

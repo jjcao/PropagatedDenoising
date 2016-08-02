@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 	default:
 		QString Neighbor = parser.value(FaceNeighborTypeOption);
 		if (!Neighbor.isEmpty())
-			params.setValue("Face Neighbor", Neighbor.toInt());
+			params.setStringListIndex("Face Neighbor", Neighbor.toInt());
 
 		QString FaceDist = parser.value(FaceDistOption);
 		if (!FaceDist.isEmpty())

@@ -43,7 +43,7 @@ void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector< 
 }
 
 double ProjectivePropagationMeshFiltering::calculateSigma(const std::vector<TriMesh::Normal> &face_normals, 
-	TriMesh::FaceIter sourceFaceIter, double smoothness)
+	TriMesh::FaceIter sourceFaceIter, int iter, double smoothness)
 {
 	double sigma = _seg.calculateAdaptiveSigma(face_normals, smoothness);
 	_seg.clearSegmen();

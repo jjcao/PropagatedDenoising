@@ -40,8 +40,14 @@ void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector
 }
 
 double ShortestPropagationMeshFiltering::calculateSigma(const std::vector<TriMesh::Normal> &face_normals, 
-	TriMesh::FaceIter sourceFaceIter, double smoothness)
+	TriMesh::FaceIter sourceFaceIter, int iter, double smoothness)
 {
+	double sigma(0.25*1.4142*2); // make Gaussian for angle > pi/2 == 0.0;
+	sigma = std::max(0.1, sigma - 0.015*iter*2);
+	return sigma;
+
+
+	//////////////////////////////
 	int sourceIdxGlobal = sourceFaceIter->idx();
 	std::vector<TriMesh::FaceHandle> &faceNeighbor = _allFaceNeighbor[sourceIdxGlobal];
 
@@ -51,7 +57,7 @@ double ShortestPropagationMeshFiltering::calculateSigma(const std::vector<TriMes
 	{
 		aver_local_normal += face_normals[faceNeighbor[st].idx()];
 	}
-	aver_local_normal = aver_local_normal / len;
+	aver_local_normal.normalize();
 
 	double stdard = 0.0;
 	for (int st = 0; st < len; st++)
@@ -60,7 +66,10 @@ double ShortestPropagationMeshFiltering::calculateSigma(const std::vector<TriMes
 		stdard += dtemp * dtemp;
 		//stdard += NormalDistance(aver_local_normal, previous_normals[projections[i][st].face_index]);
 	}
-	return sqrt(stdard / len) + smoothness;//sigma_s替代， 作为光滑的参数
+
+	sigma = sqrt(stdard / len)+0.01;//sigma_s替代， 作为光滑的参数; + smoothness
+
+	return sigma;
 }
 void ShortestPropagationMeshFiltering::setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius)
 {

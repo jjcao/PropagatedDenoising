@@ -10,7 +10,7 @@ public:
 
 protected:
 	//自适应局部区域的法线情况，计算法线的方差，用方差来作为高斯的方差，（注高斯函数中的sigma是标准差）
-	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, double smoothness)=0;
+	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, int iter, double smoothness)=0;
 	virtual void setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius) = 0;	
 	// facePaths[i] is the ith path from some target to source
 	virtual void computeGlobalPath(TriMesh &mesh, TriMesh::FaceIter sourceFaceIter,
