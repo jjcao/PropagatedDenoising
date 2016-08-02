@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
 	// options for GuidedMeshNormalFiltering && ShortestPropagationMeshFiltering && ProjectivePropagationMeshFiltering
 	QCommandLineOption FaceNeighborTypeOption(QStringList() << "faceNeighborType",
-		"The type of the neighbor of the face: geometrical (radius based: 2) or topological (vertex: 0, edge: 1 or face-ring based: 3)", "Face neighbor type", "geometrical");
+		"The type of the neighbor of the face: geometrical (radius based: 0) or topological (vertex: 1, edge: 2 or face-ring based: 3)", "Face neighbor", "geometrical");
 	parser.addOption(FaceNeighborTypeOption);
 
 	QCommandLineOption FaceDistOption(QStringList() << "FaceDist",
@@ -123,6 +123,10 @@ int main(int argc, char *argv[])
 	}
 		break;
 	default:
+		QString Neighbor = parser.value(FaceNeighborTypeOption);
+		if (!Neighbor.isEmpty())
+			params.setValue("Face Neighbor", Neighbor.toInt());
+
 		QString FaceDist = parser.value(FaceDistOption);
 		if (!FaceDist.isEmpty())
 			params.setValue("Multiple(* avg face dis.)", FaceDist.toDouble());

@@ -32,7 +32,14 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	FaceNeighborType face_neighbor_type = static_cast<FaceNeighborType>(face_neighbor_index);
-	double radius;
+	double radius = multiple_radius;
+
+	//FaceNeighborType face_neighbor_type = face_neighbor_index == 0 ? kRadiusBased : kVertexBased;
+
+	//double radius;
+	//if (face_neighbor_type == kRadiusBased)
+	//	radius = getRadius(multiple_radius, mesh);
+
 	if (face_neighbor_type == kRadiusBased)
 		radius = getAveragefaceCenterDistance(mesh) * multiple_radius;
 	setAllFaceNeighbor(mesh, face_neighbor_type, include_central_face, radius);
@@ -65,10 +72,10 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 			for (int j = 0; j < facePaths.size(); ++j)
 			{
 				std::vector<int> &facePath = facePaths[j];
-				int currentIdx = facePath[0];
+				int neighborIdx = facePath[0];//remember facePath[0] is neighbor!
 			
 				double weight = 0.0;
-				if (index != currentIdx)
+				if (index != neighborIdx)
 				{
 					double sumPF1 = 0.0, sumPF2 = 0.0;
 					//前后两项的法线差异
@@ -82,8 +89,8 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 					//累积路径差异
 					for (int k = (int)facePath.size() - 1; k >= 0; --k)
 					{
-						int currentIndex = facePath[k];
-						double temp22 = (previous_normals[currentIndex] - previous_normals[index]).length();
+						int tailIndex = facePath[k];
+						double temp22 = (previous_normals[tailIndex] - previous_normals[index]).length();
 						sumPF2 += temp22*temp22;
 					}
 
@@ -94,24 +101,26 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 				else
 				{
 					weight = 1.0;
+					neighborIdx = index;
 				}
-				filteredNormal += weight * face_area[currentIdx] * previous_normals[currentIdx];
+				filteredNormal += weight * face_area[neighborIdx] * previous_normals[neighborIdx];
 			}
-			if (!facePaths.empty())
-				filtered_normals[index] = filteredNormal.normalize();
+
+			filtered_normals[index] = filteredNormal.normalize();
 		}
 
 		// immediate update vertex position
 		updateVertexPosition(mesh, filtered_normals, vertex_iteration_number, false);
-		checkBadFace(mesh);//对坏的面进行微小的扰动
 
-		//// for debug
-		if (iter % 4 == 0)
-		{
-			data_manager_->setMesh(mesh);
-			std::stringstream ss;  ss << iter << ".obj";
-			data_manager_->ExportMeshToFile(ss.str());
-		}
+		//checkBadFace(mesh);//对坏的面进行微小的扰动
+
+		////// for debug
+		//if (iter % 4 == 0)
+		//{
+		//	data_manager_->setMesh(mesh);
+		//	std::stringstream ss;  ss << iter << ".obj";
+		//	data_manager_->ExportMeshToFile(ss.str());
+		//}
 	}
 }
 
@@ -163,8 +172,10 @@ void PropagationMeshFiltering::initParameters()
 	parameter_set_->addParameter(QString("Denoise Type"), strList_DenoiseType, 0, QString("Denoise Type"), QString("The type of denoise method."));
 
 	QStringList strList_FaceNeighborType;
-	strList_FaceNeighborType.push_back(QString("geometrical"));
-	strList_FaceNeighborType.push_back(QString("topological"));
+	strList_FaceNeighborType.push_back(QString("kRadiusBased"));
+	strList_FaceNeighborType.push_back(QString("kVertexBased"));
+	strList_FaceNeighborType.push_back(QString("kEdgeBased"));
+	strList_FaceNeighborType.push_back(QString("kFaceRingBased"));
 
 	parameter_set_->addParameter(QString("Face Neighbor"), strList_FaceNeighborType, 0, QString("Face Neighbor"), QString("The type of the neighbor of the face."));
 	parameter_set_->addParameter(QString("include central face"), true, QString("include central face"), QString("Include the central face of the neighbor or not."));

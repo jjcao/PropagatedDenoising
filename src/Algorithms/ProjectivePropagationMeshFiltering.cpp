@@ -28,7 +28,8 @@ void ProjectivePropagationMeshFiltering::computeGlobalPath(TriMesh &mesh, TriMes
 
 	facePaths.reserve(pathms.size());
 	for (int i = 0; i < pathms.size(); ++i)
-		facePaths[i] = pathms[i].path;
+		//facePaths[i] = pathms[i].path;
+		facePaths.push_back(pathms[i].path);
 }
 
 void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, 

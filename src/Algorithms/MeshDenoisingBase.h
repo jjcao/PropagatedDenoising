@@ -7,7 +7,7 @@
 class MeshDenoisingBase
 {
 public:
-	enum FaceNeighborType { kVertexBased, kEdgeBased, kRadiusBased, kFaceRingBased };
+	enum FaceNeighborType { kRadiusBased, kVertexBased, kEdgeBased, kFaceRingBased };
 	enum DenoiseType { kLocal, kGlobal };
 public:
     MeshDenoisingBase(DataManager *_data_manager, ParameterSet *_parameter_set);
