@@ -26,6 +26,7 @@ void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector
 		for (std::vector<TriMesh::FaceHandle>::iterator it = locFaceNeighbor.begin(); it != locFaceNeighbor.end(); ++it)
 		{
 			TriMesh::Point c2 = mesh.calc_face_centroid(*it);
+			// todo how about use normal distance as edge weights.
 			_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], (c1 - c2).length()));
 		}
 	}

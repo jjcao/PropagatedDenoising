@@ -71,6 +71,7 @@ void Dijkstra::computePath(const AdjacencyList & graph, const int & target, std:
 		else // source is achieved or there is node which is not visited when computeDistance();
 			return;			
 
-		path.push_back(it->first);
+		u = it->first;
+		path.push_back(u);
 	}
 }
