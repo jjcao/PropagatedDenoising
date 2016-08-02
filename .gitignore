@@ -46,3 +46,4 @@ Release
 
 # this project
 output
+/src/Denoising/*.obj

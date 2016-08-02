@@ -2,7 +2,6 @@
 #define SHORTESTPROPAGATIONMESHFILTERING_H
 
 #include "PropagationMeshFiltering.h"
-#include <map>
 #include "dijkstra.h"
 
 class ShortestPropagationMeshFiltering : public PropagationMeshFiltering
@@ -15,7 +14,7 @@ private:
 	virtual void setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius);
 	virtual void computeGlobalPath(TriMesh &mesh, TriMesh::FaceIter sourceFaceIter,
 		const std::vector<TriMesh::Point>& face_centroid, const std::vector<TriMesh::Normal>& face_normals, std::vector<std::vector<int> > &facePaths);
-	void initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, int sourceIdxGlobal);
+	void initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, int sourceIdxGlobal, const std::vector<TriMesh::Point>& face_centroid, const std::vector<TriMesh::Normal>& face_normals);
 	virtual void checkBadFace(TriMesh &mesh) {};
 	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, double smoothness);
 

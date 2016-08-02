@@ -1,7 +1,8 @@
 #include"ShortestPropagationMeshFiltering.h"
+#include <numeric>
 
-
-void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, int sourceIdxGlobal)
+void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector<TriMesh::FaceHandle> &faceNeighbor, 
+	int sourceIdxGlobal, const std::vector<TriMesh::Point>& face_centroid, const std::vector<TriMesh::Normal>& face_normals)
 {
 	_local2GlobalIdx.clear(); _global2localIdx.clear();
 	_localGraph.clear();
@@ -18,16 +19,19 @@ void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector
 	i = 0;
 	for (std::vector<TriMesh::FaceHandle>::iterator iter = faceNeighbor.begin(); iter != faceNeighbor.end(); ++iter, ++i)
 	{
-		TriMesh::Point c1 = mesh.calc_face_centroid(*iter);
+		TriMesh::Point c1 = face_centroid[iter->idx()];// mesh.calc_face_centroid(*iter);
+		TriMesh::Normal n1 = face_normals[iter->idx()];
 		std::vector<TriMesh::FaceHandle> locFaceNeighbor;
 		// todo edgeBased v.s. vertexBased
 		getFaceNeighbor(mesh, *iter, kEdgeBased, locFaceNeighbor);
 
 		for (std::vector<TriMesh::FaceHandle>::iterator it = locFaceNeighbor.begin(); it != locFaceNeighbor.end(); ++it)
 		{
-			TriMesh::Point c2 = mesh.calc_face_centroid(*it);
+			TriMesh::Point c2 = face_centroid[it->idx()];
+			TriMesh::Normal n2 = face_normals[it->idx()];
 			// todo how about use normal distance as edge weights.
-			_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], (c1 - c2).length()));
+			_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], std::max((n1 - n2).length(), std::numeric_limits<double>::epsilon()) ) );
+			//_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], (c1 - c2).length()));
 		}
 	}
 
@@ -67,7 +71,7 @@ void ShortestPropagationMeshFiltering::computeGlobalPath(TriMesh &mesh, TriMesh:
 {
 	int sourceIdxGlobal = sourceFaceIter->idx();
 	std::vector<TriMesh::FaceHandle> &faceNeighbor = _allFaceNeighbor[sourceIdxGlobal];
-	initLocalGraph(mesh, faceNeighbor, sourceIdxGlobal);
+	initLocalGraph(mesh, faceNeighbor, sourceIdxGlobal, face_centroid, face_normals);
 
 	facePaths.resize(faceNeighbor.size());
 	for (int j = 0; j < (int)faceNeighbor.size(); ++j)

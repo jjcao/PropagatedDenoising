@@ -10,7 +10,11 @@ addpath(genpath([MYTOOLBOXROOT '/jjcao_mesh/']) );
 
 % mex -largeArrayDims ../Algorithms/dijkstra_mex.cpp ../Algorithms/dijkstra.cpp
 
-[M.verts, M.faces] = read_mesh('E:\work\PropagatedDenoising\models\compareWang/torusnoise.obj');
+% [M.verts, M.faces] = read_mesh('E:\work\PropagatedDenoising\models\compareWang/torusnoise.obj');
+[M.verts, M.faces] = read_mesh('E:\work\PropagatedDenoising\models\Fandisk0.7/Original.obj');
+
+[normal,normalf] = compute_normal(M.verts, M.faces);
+normalf = normalf';
 [A,faceCenter] = compute_dual_graph(M.faces,M.verts);
 % figure('Name','Dual Mesh'); set(gcf,'color','white');hold on;
 % options.ps=10;
@@ -51,7 +55,10 @@ localA = zeros(length(faceNeighbors));
 for i=1:length(faceNeighbors)
     neiIdx = fring{faceNeighbors(i)}; % neighbor index
     for j = 1:length(neiIdx)
-        w = norm(faceCenter(neiIdx(j),:) - faceCenter(faceNeighbors(i),:));
+        tmp = norm(normalf(neiIdx(j),:) - normalf(faceNeighbors(i),:));
+%         tmp = norm(faceCenter(neiIdx(j),:) - faceCenter(faceNeighbors(i),:));
+        w = max(tmp, 0.00001);
+            
         localNeiIdx = find(faceNeighbors==neiIdx(j));
         localA(i, localNeiIdx) = w;
     end
@@ -66,10 +73,10 @@ localB(localB>0)=1;
 options.end_points = find(sum(localB,2) <3 );
 localPath = perform_dijkstra_path_extraction(localA,D,options.end_points); 
 
-faceColor = zeros(size(M.faces,1),1);
+faceColor = zeros(size(M.faces,1),1)+2*max(D);
 faceColor(faceNeighbors) = D;
 figure('Name','shortest path by Dijkstra'); set(gcf,'color','white');
-h=trisurf(M.faces, M.verts(:,1), M.verts(:,2), M.verts(:,3), 'FaceVertexCData', faceColor);%, 'edgecolor','none'
+h=trisurf(M.faces, M.verts(:,1), M.verts(:,2), M.verts(:,3), 'FaceVertexCData', faceColor, 'faceAlpha', 0.8);%, 'edgecolor','none'
 % h=trisurf(M.faces(faceNeighbors,:), M.verts(:,1), M.verts(:,2), M.verts(:,3), 'FaceVertexCData', D);%, 'edgecolor','none'
 axis off;    axis equal;  mouse3d; hold on; colorbar;
 % set(h, 'faceAlpha', 0.8);
@@ -83,12 +90,12 @@ end
 
 %%
 p = faceNeighbors(localPath{1});
-faceColor = zeros(size(M.faces,1),1);
+faceColor = zeros(size(M.faces,1),1)+2*max(D);
 faceColor(faceNeighbors) = D;
-faceColor(p) = max(D)*2;
-faceColor(faceIdx) = max(D)*3;
+faceColor(p) = max(D)*3;
+faceColor(faceIdx) = max(D)*4;
 figure('Name','shortest path'); set(gcf,'color','white');
-h=trisurf(M.faces, M.verts(:,1), M.verts(:,2), M.verts(:,3), 'FaceVertexCData', faceColor);%, 'edgecolor','none'
+h=trisurf(M.faces, M.verts(:,1), M.verts(:,2), M.verts(:,3), 'FaceVertexCData', faceColor, 'faceAlpha', 0.8);%, 'edgecolor','none'
 % h=trisurf(M.faces(faceNeighbors,:), M.verts(:,1), M.verts(:,2), M.verts(:,3), 'FaceVertexCData', D);%, 'edgecolor','none'
 axis off;    axis equal; mouse3d; hold on;
 %% weight
