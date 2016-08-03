@@ -7,6 +7,7 @@ public:
 	PropagationMeshFiltering(DataManager *_data_manager, ParameterSet *_parameter_set);
 	~PropagationMeshFiltering(){}
 	void denoise();
+	virtual void initParameters();
 
 protected:
 	//自适应局部区域的法线情况，计算法线的方差，用方差来作为高斯的方差，（注高斯函数中的sigma是标准差）
@@ -23,8 +24,6 @@ protected:
 	double GaussianWeight(double distance, double sigma);
 
 private:
-	void initParameters();
-
 	void updateFilteredNormals(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals);
 	//void updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals);
 

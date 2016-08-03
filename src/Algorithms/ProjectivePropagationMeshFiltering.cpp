@@ -1,4 +1,9 @@
 #include "ProjectivePropagationMeshFiltering.h"
+void ProjectivePropagationMeshFiltering::initParameters()
+{
+	PropagationMeshFiltering::initParameters();
+	parameter_set_->setStringListIndex("Face Neighbor", 3);
+}
 
 void ProjectivePropagationMeshFiltering::setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius)
 {

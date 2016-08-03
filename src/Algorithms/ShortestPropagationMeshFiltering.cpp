@@ -30,8 +30,8 @@ void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector
 			TriMesh::Point c2 = face_centroid[it->idx()];
 			TriMesh::Normal n2 = face_normals[it->idx()];
 			// todo how about use normal distance as edge weights.
-			_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], std::max((n1 - n2).length(), std::numeric_limits<double>::epsilon()) ) );
-			//_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], (c1 - c2).length()));
+			//_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], std::max((n1 - n2).length(), std::numeric_limits<double>::epsilon()) ) );
+			_localGraph[i].push_back(std::make_pair(_global2localIdx[it->idx()], (c1 - c2).length()));
 		}
 	}
 
@@ -42,7 +42,7 @@ void ShortestPropagationMeshFiltering::initLocalGraph(TriMesh &mesh, std::vector
 double ShortestPropagationMeshFiltering::calculateSigma(const std::vector<TriMesh::Normal> &face_normals, 
 	TriMesh::FaceIter sourceFaceIter, int iter, double smoothness)
 {
-	double sigma(0.25*1.4142*2); // make Gaussian for angle > pi/2 == 0.0;
+	double sigma(0.25*1.4142*smoothness); // make Gaussian for angle > pi/2 == 0.0;
 	sigma = std::max(0.1, sigma - 0.015*iter*2);
 	return sigma;
 

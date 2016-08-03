@@ -9,6 +9,7 @@ class ProjectivePropagationMeshFiltering : public PropagationMeshFiltering
 public:
 	ProjectivePropagationMeshFiltering(DataManager *_data_manager, ParameterSet *_parameter_set) : PropagationMeshFiltering(_data_manager, _parameter_set){}
 	~ProjectivePropagationMeshFiltering(){}
+	virtual void initParameters();
 
 private:
 	/*the first two parameters define the original points, the third parameter define the projectoin normal, the last is used to calculating the dist*/

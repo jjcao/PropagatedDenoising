@@ -90,8 +90,8 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 					}
 
 					//得到SigmaS 和SigmaR(//SigmaR指的是法向差的范围，这个没有给出某种统计值，指导的这篇默认用的是0.35	//)
-					// todo: sigma for sumA should be larger than sumR?
-					weight = GaussianWeight(sqrt(sumA), sigma_r) * GaussianWeight(sqrt(sumR), sigma_s*sigma_r);
+					// sigma for sumA should be larger than sumR? bad
+					weight = GaussianWeight(sqrt(sumA), sigma_r) * GaussianWeight(sqrt(sumR), sigma_r);
 				}
 				else{
 					neighborIdx = index;
@@ -174,7 +174,7 @@ void PropagationMeshFiltering::initParameters()
 	parameter_set_->addParameter(QString("Face Neighbor"), strList_FaceNeighborType, 0, QString("Face Neighbor"), QString("The type of the neighbor of the face."));
 	parameter_set_->addParameter(QString("include central face"), true, QString("include central face"), QString("Include the central face of the neighbor or not."));
 
-	parameter_set_->addParameter(QString("Multiple(* avg face dis.)"), 2.0, QString("Multiple(* avg face dis.)"), QString("Radius for search geometrical neighbor of the face."),
+	parameter_set_->addParameter(QString("Multiple(* avg face dis.)"), 3.0, QString("Multiple(* avg face dis.)"), QString("Radius for search geometrical neighbor of the face."),
 		true, 0.1, 10.0);
 	parameter_set_->addParameter(QString("Multiple(* sigma_s)"), 1.0, QString("Multiple(* sigma_s)"), QString("Standard deviation of spatial weight."),
 		true, 1.0e-9, 10.0);
