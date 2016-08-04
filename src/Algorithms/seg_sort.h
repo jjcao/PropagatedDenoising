@@ -24,7 +24,7 @@ public:
 	//---------------------------FaceRing interface----------------------//
 	/*the first two parameters define the original points, the third parameter define the projectoin normal, the last is used to calculating the dist*/
 	void localProjection(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, const std::vector<TriMesh::Point> &face_centroid, 
-		const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid);
+		const std::vector<TriMesh::Normal> &face_normals, int centerf_index);
 
 	//---------------------------Radius interface----------------------//
 	void localProjection(const std::vector<TriMesh::FaceHandle> &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,

@@ -2,10 +2,13 @@
 #include<algorithm>
 
 void Segmen::localProjection(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,
-	const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid)
+	const std::vector<TriMesh::Normal> &face_normals, int centerf_index)
 {
 	//这个函数的效率太低了
 	projection_sets.clear();
+
+	TriMesh::Point centerf_centroid = face_centroid[centerf_index];
+	TriMesh::Normal centerf_normal = face_normals[centerf_index];
 	for (int j = 1; j < (int)face_neighbor.size(); ++j)
 	{
 		const std::vector<TriMesh::FaceHandle> &face_neighbor_ring = face_neighbor[j];
@@ -13,14 +16,14 @@ void Segmen::localProjection(const std::vector< std::vector<TriMesh::FaceHandle>
 		{
 			int neighborf_index = face_neighbor_ring[k].idx();
 			TriMesh::Point neighborf_centroid = face_centroid[neighborf_index];
-			//TriMesh::Point neighbotf_normal = normals[neighborf_index];
+			TriMesh::Point neighbotf_normal = face_normals[neighborf_index];
 
 			Projection temp;
 			temp.face_index = neighborf_index;
 			temp.p_point = neighborf_centroid - abs(centerf_normal | (neighborf_centroid - centerf_centroid))*centerf_normal;
-			temp.dist = (neighborf_centroid - centerf_centroid).length();
+			//temp.dist = (neighborf_centroid - centerf_centroid).length();
 			//------ using normal distance, not work well, almost the same result
-			//temp.dist = (neighbotf_normal - centerf_normal).length();
+			temp.dist = (neighbotf_normal - centerf_normal).length();
 			temp.ring = j;
 
 			projection_sets.push_back(temp);
@@ -155,7 +158,7 @@ double Segmen::calculateAdaptiveSigma(const std::vector<TriMesh::Normal> &face_n
 			{
 				aver_local_normal += face_normals[regions[num][st].face_index];
 			}
-			aver_local_normal = aver_local_normal / len;
+			aver_local_normal.normalize();
 
 			double stdard = 0.0;
 			for (int st = 0; st < len; st++)
