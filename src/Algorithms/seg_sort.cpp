@@ -21,9 +21,9 @@ void Segmen::localProjection(const std::vector< std::vector<TriMesh::FaceHandle>
 			Projection temp;
 			temp.face_index = neighborf_index;
 			temp.p_point = neighborf_centroid - abs(centerf_normal | (neighborf_centroid - centerf_centroid))*centerf_normal;
-			//temp.dist = (neighborf_centroid - centerf_centroid).length();
+			temp.dist = (neighborf_centroid - centerf_centroid).length();
 			//------ using normal distance, not work well, almost the same result
-			temp.dist = (neighbotf_normal - centerf_normal).length();
+			//temp.dist = std::max((neighbotf_normal - centerf_normal).length(), std::numeric_limits<double>::epsilon());
 			temp.ring = j;
 
 			projection_sets.push_back(temp);
