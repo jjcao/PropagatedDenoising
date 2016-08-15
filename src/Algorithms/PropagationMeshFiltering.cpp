@@ -37,7 +37,8 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 		radius = getAveragefaceCenterDistance(mesh) * multiple_radius;
 
 	setAllFaceNeighbor(mesh, face_neighbor_type, include_central_face, radius);
-	
+	getAllFaceNeighbor(mesh, _allGuidedNeighbor, kVertexBased); //getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);
+
 	getFaceNormal(mesh, filtered_normals);
 
 	std::vector<double> face_area((int)mesh.n_faces());
@@ -121,6 +122,31 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 			std::stringstream ss;  ss << iter << ".obj";
 			data_manager_->ExportMeshToFile(ss.str());
 		}
+	}
+}
+
+void PropagationMeshFiltering::getGuidedNormals(TriMesh &mesh,
+	std::vector<double> &face_area, std::vector<TriMesh::Normal> &normals,
+	std::vector<std::pair<double, TriMesh::Normal> >& range_and_mean_normal,
+	std::vector<TriMesh::Normal> &guided_normals)
+{
+	getRangeAndMeanNormal(mesh, _allGuidedNeighbor, face_area, normals, range_and_mean_normal);
+
+	for (TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); f_it++)
+	{
+		std::vector<TriMesh::FaceHandle> face_neighbor = _allGuidedNeighbor[f_it->idx()];
+		double min_range = 1.0e8;
+		int min_idx = 0;
+		for (int i = 0; i < (int)face_neighbor.size(); i++)
+		{
+			double current_range = range_and_mean_normal[face_neighbor[i].idx()].first;
+			if (min_range > current_range) {
+				min_range = current_range;
+				min_idx = i;
+			}
+		}
+		TriMesh::FaceHandle min_face_handle = face_neighbor[min_idx];
+		guided_normals[f_it->idx()] = range_and_mean_normal[min_face_handle.idx()].second;
 	}
 }
 

@@ -15,10 +15,7 @@ private:
 	/*the first two parameters define the original points, the third parameter define the projectoin normal, the last is used to calculating the dist*/
 	void calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor,
 		const std::vector<TriMesh::Point> &face_centroid, const std::vector<TriMesh::Normal> &face_normals, int centerf_index,
-		const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms);
-
-	virtual void getGuidedNormals(TriMesh &mesh, std::vector<double> &face_area, std::vector<TriMesh::Normal> &normals,
-		std::vector<std::pair<double, TriMesh::Normal> > range_and_mean_normal, std::vector<TriMesh::Normal> &guided_normals);
+		const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms);	
 
 	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, int iter, double smoothness);
 	
@@ -29,7 +26,6 @@ private:
 
 	Segmen _seg;
 	std::vector< std::vector<std::vector<TriMesh::FaceHandle> > > _allFaceNeighbor;
-	std::vector<std::vector<TriMesh::FaceHandle> > _allGuidedNeighbor;
 };
 
 #endif

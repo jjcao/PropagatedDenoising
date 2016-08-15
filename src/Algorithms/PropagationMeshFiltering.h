@@ -20,9 +20,9 @@ protected:
 	void getRangeAndMeanNormal(TriMesh &mesh, std::vector<std::vector<TriMesh::FaceHandle> > &all_guided_neighbor,
 		std::vector<double> &face_area, std::vector<TriMesh::Normal> &normals,
 		std::vector<std::pair<double, TriMesh::Normal> > &range_and_mean_normal);
-	virtual void getGuidedNormals(TriMesh &mesh,
+	void getGuidedNormals(TriMesh &mesh,
 		std::vector<double> &face_area, std::vector<TriMesh::Normal> &normals,
-		std::vector<std::pair<double, TriMesh::Normal> > range_and_mean_normal, std::vector<TriMesh::Normal> &guided_normals) = 0;
+		std::vector<std::pair<double, TriMesh::Normal> >& range_and_mean_normal, std::vector<TriMesh::Normal> &guided_normals);
 
 
 	virtual void computeGlobalPath(TriMesh &mesh, TriMesh::FaceIter sourceFaceIter,
@@ -32,6 +32,7 @@ protected:
 
 	std::vector<int> _local2GlobalIdx;
 	std::map<int, int> _global2localIdx;
+	std::vector<std::vector<TriMesh::FaceHandle> > _allGuidedNeighbor;
 	double GaussianWeight(double distance, double sigma);
 	double NormalDistance(const TriMesh::Normal &n1, const TriMesh::Normal &n2);
 

@@ -13,10 +13,6 @@ public:
 private:
 	virtual void setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius);
 
-	virtual void getGuidedNormals(TriMesh &mesh,
-		std::vector<double> &face_area, std::vector<TriMesh::Normal> &normals,
-		std::vector<std::pair<double, TriMesh::Normal> > range_and_mean_normal, std::vector<TriMesh::Normal> &guided_normals);
-
 	virtual void computeGlobalPath(TriMesh &mesh, TriMesh::FaceIter sourceFaceIter,
 		const std::vector<TriMesh::Point>& face_centroid, const std::vector<TriMesh::Normal>& face_normals, std::vector<std::vector<int> > &facePaths);
 
@@ -28,11 +24,6 @@ private:
 	Dijkstra _dij;
 	AdjacencyList _localGraph;	
 	std::vector<std::vector<TriMesh::FaceHandle> > _allFaceNeighbor;
-	std::vector<std::vector<TriMesh::FaceHandle> > _allGuidedNeighbor;
-
-
 };
-
-
 
 #endif
