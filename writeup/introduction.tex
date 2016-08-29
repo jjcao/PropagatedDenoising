@@ -26,7 +26,7 @@ We discard the shortest path algorithm in selecting filtered path because the ti
 A simple and effective method is put forward for solving that problem.
 For filtering the normal signal, we project its neighborhood onto a surface based on its normals.
 Then the areal coordination is used to divide its neighbor to seven regions. To a certain extent, the seven regions depict the local characteristics of the mesh.
-Afterwards, we sort its neighborhood though the difference of distance in same region.
+Afterwards, we sort its neighborhood though the difference of distance in one region.
 Though above operations, a fixed pattern can be obtained and be used for selecting the filtered path.
 Finally, we apply propagated filtering to the face normals, then update the mesh vertices to match the filtered face normals.
 The effectiveness of our approach is illustrated by extensive experimental results in mesh denoising and smoothing.

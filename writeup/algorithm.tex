@@ -1,6 +1,207 @@
-\section{Bilateral Normal Filtering}
-Their method considers normals as a surface signal defined over the original mesh.
-This allows the design of a novel bilateral normal filter that depends on both spatial distance and signal distance.
-Their bilateral normal filtering not only was used in a local, iterative scheme, but also in a global non-iterative scheme for isotropic denoising.
+%\section{Bilateral Normal Filtering}
+%Their method considers normals as a surface signal defined over the original mesh.
+%This allows the design of a novel bilateral normal filter that depends on both spatial distance and signal distance.
+%Their bilateral normal filtering not only was used in a local, iterative scheme, but also in a global non-iterative scheme for isotropic denoising.
+%
+%extremely noise,  feature preserving, irregular surface sampling.
+\section{Propagation Mesh Filtering}
 
-extremely noise,  feature preserving, irregular surface sampling.
+%把后面的 * 去掉是单栏
+\begin{figure*}
+\centering
+\includegraphics[width = 12.0cm]{smileface.jpg}
+\vspace{0.5mm}
+\caption{ The pattern}
+\label{pattern}
+\end{figure*}
+
+%\begin{figure*}[!t]
+%\centering
+%\subfigure[Number of elements read] {\includegraphics[height=2in,width=2in,angle=-90]{52.eps}}
+%\subfigure[Size of disk files scanned] {\includegraphics[height=2in,width=2in,angle=-90]{51.eps}}
+%\subfigure[Execution time] {\includegraphics[height=2in,width=2in,angle=-90]{53.eps}}
+%\caption{ PathStack versus TJFast using XMark data }
+%\label{fig5}
+%\end{figure*}
+
+In this section, we introduce our propagated filtering framework in detail.
+First, we will review the classical signal filtering theory.
+
+\subsection{Signal filtering theory}
+Given a noisy signal $I$, the filtered output $J_{p}$ at point $p$ can be produced by this general form
+\begin{equation}
+\begin{aligned}
+\label{generalform}
+J_{p} = \frac{1}{W_{p}}\int_{\mathcal{N}(p)}\omega_{p, q}I_{q}d_{q}\, ,
+\end{aligned}
+\end{equation}
+Here, $I_{q}$ denotes the value of the signal at point $q$; $\mathcal{N}(p)$ is the neighborhood of the point $p$;
+$\omega_{p, q}$ indicates the weight for each neighboring signal,
+and $W_{p} = \int_{\mathcal{N}(p)}\omega_{p, q}d_{q}$ is the normalization factor for ensuring the sum of all $\omega_{p,q}$ equal to 1.
+The construction of $\omega_{p,q}$ is very important, it directly relates to the performance of edge-preserving.
+
+The classical nonlinear bilateral filtering uses two Gaussian functions as the spatial and range weights respectively:
+\begin{equation}
+\begin{aligned}
+\label{eq:generalform}
+\omega_{p,q} = g(d(p, q); \sigma_{s})g(d(I_{p}, I_{q}); \sigma_{r})\, ,
+\end{aligned}
+\end{equation}
+where $\sigma_{s}$, $\sigma_{r}$ are variance parameters and the function $d$ defined as:
+\begin{equation}
+\begin{aligned}
+\label{eq:generalform}
+d(x_{1}, x_{2}) = ||x_{1} - x_{2} ||^{2}\, ,
+%\\
+%d_{BF}(I_{p}, I_{q}) = || I_{p} - I_{q} ||^{2}\, ,
+\end{aligned}
+\end{equation}
+ As the ability of Gaussian function, the filtered signal $J_{p}$ is influenced by the neighborhood only if their spatial and range distances are enough closed.
+ As a result, the bilateral filter is able to smooth the signal while preserve the edge structures.
+
+ The effectiveness of bilateral filter relies on the range function which reflects the local information of signal, and then applies the averaging weights as the filtered output.
+ However, the difference between the input signal values $I_{p}$ and $I_{q}$ can not provides reliable prediction for that between the desired signal values $J_{p}$ and $J_{q}$.
+
+ In order to solve this problem, researchers apply the guidance signal $G$ to provide more reliable information about the structure of the desired output.
+ The famous joint bilateral filter adapts following form as the weight:
+ \begin{equation}
+ \begin{aligned}
+ \label{eq:generalform}
+ \omega_{p,q} = g(d(p, q); \sigma_{s})g(d(G_{p}, G_{q}); \sigma_{r})\, ,
+ \end{aligned}
+ \end{equation}
+( how to obtain the guidance signal??)
+
+Other researchers adapt cumulative difference of input signal to depict the local structure of desired signal.
+Propagated filter is their representative.
+It considers the cumulative difference not only between adjacent signals but also start-end signals.
+Their weight is
+ \begin{equation}
+ \begin{aligned}
+ \label{propagation}
+ \omega_{p,q} = g(d^{a}(I_{p}, I_{q}); \sigma_{s})g(d^{r}(I_{p}, I_{q}); \sigma_{r})\, ,
+ \end{aligned}
+ \end{equation}
+ here,
+ \begin{equation}
+ \begin{aligned}
+ \label{eq:path}
+ d^{a}(I_{p}, I_{q}) = \sqrt{\sum_{x, x+1\in{\phi}}||I_{x+1}-I_{x}||^{2}}\, ,
+ \\
+ d^{r}(I_{p}, I_{q}) = \sqrt{\sum_{x\in{\phi}}||I_{x}-I_{p}||^{2}}\, ,
+ %\sqrt{\sum\limits_{x,x+1\in\phi}||I_{x+1}-I_{x}}\, ,
+ \end{aligned}
+ \end{equation}
+Note that $\phi$ is the path connecting points $p$ and $q$.
+The propagated filter inherits the advantage of bilateral filter and become more adaptive to context information of signal.
+
+When we consider normals as a surface signal defined over the original mesh, it is easy to put the propagation filtering algorithm to mesh denoising.
+%The propagated filter for a normal signal which is defined over the mesh can be written as
+
+Given points $p$ and $q$ in a mesh, the difficulty is that we need to first determine a path connecting $p$ and $q$ for calculating the weight.
+It seems like the geodesic path algorithm obtains the largest weight $\omega_{p,q}$, but it is computationally expensive when the neighborhood is big.
+In considering the number of mesh faces, it will use more time.
+
+Instead, like the paper\cite{Chang2015propagated}, we consider a particular path for filtering all faces in a mesh.
+It is very difficult to directly find a fixed pattern on the mesh face.
+And considering in plane is much easier.
+Through local projection, path would be chosen in a particular 2D pattern which is shown in Figure~\ref{pattern}.
+In our experiments, we find that this operation is about 3 times faster than applying shortest path in obtaining similar results.
+
+\subsection{Filtering mesh geometry}
+Given a noisy triangle mesh, our goal is to filter the noise while less change the mesh structure.
+In order to achieve this purpose, we adapt a two-stage process.
+Firstly, noisy face normals are filtered iteratively by equation~\ref{generalform} with the weight chosen by equation~\ref{propagation}.
+Secondly, according to the filtered face normals, vertex positions are updated iteratively though gradient descent.
+
+{\bfseries Filtering face normals.} For a triangle face $f_{i}$, its outward normal $n_{i}$ can be calculated by outer product easily.
+Then we consider $n_{i}$ as a signal associated with the face centroid $c_{i}$.
+In order to filter the face normals $n_{i}$, we need to find a path $\phi$ connecting $n_{i}$ and its neighborhood $n_{j}$.
+Then a filtered face normal $\bar{n_{i}}$ is computed from the propagated mesh filtering
+ \begin{equation}
+ \begin{aligned}
+ \label{propagatedMeshFiltering}
+ %\mathclap include sum 下标
+ \bar{n_{i}} = \frac{1}{W_{i}}\sum_{\mathclap{f_{j}\in\mathcal{N}_{i}}}A_{j}g(d^{a}(n_{i}, n_{j}); \sigma_{s})g(d^{r}(n_{i}, n_{j}); \sigma_{r})n_{j}\, ,
+ \end{aligned}
+ \end{equation}
+  here,
+ \begin{equation}
+ \begin{aligned}
+ \label{eq:path}
+ d^{a}(n_{i}, n_{j}) = \sqrt{\sum_{x, x+1\in{\phi}}||n_{x+1}-n_{x}||^{2}}\, ,
+ \\
+ d^{r}(n_{i}, n_{j}) = \sqrt{\sum_{x\in{\phi}}||n_{x}-n_{i}||^{2}}\, ,
+ %\sqrt{\sum\limits_{x,x+1\in\phi}||I_{x+1}-I_{x}}\, ,
+ \end{aligned}
+ \end{equation}
+ where $W_{i}$ is the normalization factor,
+ calculated by $||\sum\limits_{\mathclap{f_{j}\in\mathcal{N}_{i}}}A_{j}g(d^{a}(n_{i}, n_{j}); \sigma_{s})g(d^{r}(n_{i}, n_{j}); \sigma_{r})n_{j}||$ which ensures that $\bar{n_{i}}$ is a unit normal;
+ $\mathcal{N}_{i}$ is the neighborhood of $f_{i}$. The set $\mathcal{N}_{i}$ consists of the $f_{i}$ and its neighborhood.
+ In our paper, we use the geometrical neighborhood, defined at the paper~\cite{Zhang2015Filter}.
+
+ {\bfseries Updating vertices.} After all face normals is filtered, the vertex positions need to be updated to cater to these new normals.
+ We adopt the iterative scheme in the paper~\cite{sun2007fast} to update the vertex positions.
+ Namely, for a face $f_{i}$, we calculate its updated vertex positions via the following iteration form
+ \begin{equation}
+ \begin{aligned}
+ \label{vertexupdate}
+ %\mathclap include sum 下标
+ \bar{v_{i}}^{(t+1)} = \bar{v_{i}}^{(t)} + \frac{1}|{\mathcal{F}_{i}}|\sum_{j\in\mathcal{F}_{i}}\bar{n}_{j}[\bar{n}_{j}\cdot(\bar{c_{j}}^{(t)}-\bar{v_{j}}^{(t)})]\, ,
+ \end{aligned}
+ \end{equation}
+ where $\bar{v_{j}}^{(t)}$ is the value of $\bar{v_{i}}$ in the $t-th$ iteration,
+ $\mathcal{F}_{i}$ is the index set of the incident faces for $\bar{v_{i}}$,
+ $|\cdot|$ denotes the cardinality of a set,
+ and $\bar{c_{j}}^{(t)} = \sum_{i=1}^{3}\bar{v_{j_{i}}}^{(t)}/3$ is the centroid of the triangle $f_{j}$.
+ This scheme is actually based on the orthogonality between the normal and the three edges of each face on the mesh.
+ Then adopts a gradient descend process for solving that orthogonality equation in the conditions of  $\mathcal{l}_2$ error.
+ In our experiments, 10 to 20 iterations are sufficient for achieving satisfactory results and approximately up to above conditions.
+ Our filtered process is summarized in Algorithm~\ref{algorithm:1}.
+ In the next section, we introduce a simple but effective method for selecting a particular pattern for our propagated mesh filtering.  
+
+ \section{Path chosen for mesh filtering}
+ In image, many particular patterns can be chosen for generating the path needed by propagation filtering.
+ These patterns are simple and easy to be thought about.
+ But in triangle mesh, it is very difficult to obtain a pattern for choosing pathes.
+ The easiest way to be thought of is that applying the shortest path algorithm.
+ However, this method is time consuming.
+ We deal with this problem in this paper within the context of mesh denoising (and smoothing).
+ 
+ Our method is based on the following theory: the areal coordinates of triangle segments the plane into seven regions. 
+ And also it reflects the local feature of mesh. We will lately explain it.
+ Areal coordinates are extremely useful in engineering applications involving triangular subdomains. 
+ These make analytic integrals often easier to evaluate, and Gaussian quadrature tables are often presented in terms of area coordinates.
+ In the context of a triangle, the areal coordinates of a point $P$ are equivalent to the ratios of the areas of $PBC$, $PCA$ and $PAB$ to the area of the reference triangle $ABC$, 
+ shown in the figure~\ref{??}.
+ Because the ratios are a plus or a minus, it divide the plane where the triangle is to seven parts.
+ That gives us an approach to obtain a particular pattern solving the problem of paths.
+ 
+ Thus for each triangle $f_i$, we can projective its neighborhood $\mathcal{N}_i$ to the plane where $f_i$ is.
+ In more detail, we only projective their centroid to that plane.
+ Then based on the three points of $f_i$, we divide these centroid to seven parts. 
+ In this way, we give each neighbor a label that belong to a specified region. 
+ And in some extend, these regions can depict the local structure of a mesh.
+ After that, we sort these neighbors belong to the same region basing their normal difference to $f_i$.
+ Finally, we provide a particular pattern to assign the path for matching the ordered neighbors.
+ The entire process is depicted in the figure~\ref{pattern}.
+ 
+ (explain the generation of path)
+ In the next section, we will introduce the experimental results basing on our method.
+ 
+ 
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
