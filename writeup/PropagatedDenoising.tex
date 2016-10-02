@@ -7,7 +7,16 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{mathtools}
+\usepackage{multirow}
+
+\makeatletter
+\let\c@lofdepth\relax
+\let\c@lotdepth\relax
+\makeatother
+\usepackage{subfigure}
 
 % Include other packages here, before hyperref.
 
@@ -27,7 +36,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE
-\title{Propagated Mesh Normal Filtering}
+\title{Intrinsic filter for 2D manifold surface}
 
 \author{First Author\\
 Institution1\\
