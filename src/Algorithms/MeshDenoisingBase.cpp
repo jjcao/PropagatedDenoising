@@ -177,19 +177,20 @@ void MeshDenoisingBase::getFaceRingBasedFaceNeighbor(TriMesh &mesh, TriMesh::Fac
 	//µÚ0²ã
 	std::vector<TriMesh::FaceHandle> face_ring_neighbor;
 	face_ring_neighbor.push_back(fh);
+	flag[fh.idx()] = true;
 	face_neighbor.push_back(face_ring_neighbor);
 
 	std::vector<TriMesh::FaceHandle> test_face_ring_neighbor = face_ring_neighbor;
-	for (int ring = 1; ring <= radius; ring++)
+	for (int ring = 1; ring <= radius; ++ring)
 	{
 
 		std::vector<TriMesh::FaceHandle> temp_face_ring_neighbor;
-		for (int i = 0; i < test_face_ring_neighbor.size(); i++)
+		for (int i = 0; i < test_face_ring_neighbor.size(); ++i)
 		{
 			std::vector<TriMesh::FaceHandle> temp1_fh;
 			getVertexBasedFaceNeighbor(mesh, test_face_ring_neighbor[i], temp1_fh);
 			//getEdgeBasedFaceNeighbor(mesh, test_face_ring_neighbor[i], temp1_fh);
-			for (int j = 0; j < temp1_fh.size(); j++)
+			for (int j = 0; j < temp1_fh.size(); ++j)
 			{
 				TriMesh::FaceHandle temp_test = temp1_fh[j];
 				if (!flag[temp_test.idx()])

@@ -1,5 +1,5 @@
 #include "PropagationMeshFiltering.h"
-#include<iostream>
+#include <iostream>
 #include <sstream>
 
 void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, std::vector<TriMesh::Normal> &filtered_normals)
@@ -36,42 +36,58 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 	if (face_neighbor_type == kRadiusBased)
 		radius = getAveragefaceCenterDistance(mesh) * multiple_radius;
 
-	setAllFaceNeighbor(mesh, face_neighbor_type, include_central_face, radius);
-	getAllFaceNeighbor(mesh, _allGuidedNeighbor, kVertexBased); //getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);
+	setAllFaceNeighbor(mesh, face_neighbor_type, false, radius);//不能包括他自己
+	//getAllFaceNeighbor(mesh, _allGuidedNeighbor, kVertexBased); //getAllGuidedNeighborGMNF(mesh, all_guided_neighbor);
 
 	getFaceNormal(mesh, filtered_normals);
 
 	std::vector<double> face_area((int)mesh.n_faces());
 	std::vector<TriMesh::Point> face_centroid((int)mesh.n_faces());
 	std::vector<TriMesh::Normal> previous_normals((int)mesh.n_faces());//上一次的法线
-	std::vector<TriMesh::Normal> guided_normals((int)mesh.n_faces());
-	std::vector<std::pair<double, TriMesh::Normal> > range_and_mean_normal((int)mesh.n_faces());
+	//std::vector<TriMesh::Normal> guided_normals((int)mesh.n_faces());
+	//std::vector<std::pair<double, TriMesh::Normal> > range_and_mean_normal((int)mesh.n_faces());
+
+	//路径计算一次
+	std::vector< std::vector< std::vector<int> > > allfacePaths;
+	allfacePaths.reserve((int)mesh.n_faces());
+
+	getFaceCentroid(mesh, face_centroid);
+	getFaceArea(mesh, face_area);
+	getFaceNormal(mesh, previous_normals);
+
+	// save all pathes
+	for (TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); ++f_it)
+	{
+		std::vector< std::vector<int> > facePaths1;
+		computeGlobalPath(mesh, f_it, face_centroid, previous_normals, facePaths1);//引用出错？不是，因为从32改为64后，（系统中的）环境变量也需要更改
+		allfacePaths.push_back(facePaths1);
+	}
+
 
 	/////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 	for (int iter = 0; iter < normal_iteration_number; ++iter)
 	{
-		std::cout << "iteration: " << iter << std::endl;
+		//std::cout << "iteration: " << iter << std::endl;
 
 		getFaceCentroid(mesh, face_centroid);
 		getFaceArea(mesh, face_area);
 		getFaceNormal(mesh, previous_normals);
 
-		getGuidedNormals(mesh, face_area, previous_normals, range_and_mean_normal, guided_normals);
+		//double sigma_s = getSigmaS(sigma_s, face_centroid, mesh);
+		//getGuidedNormals(mesh, face_area, previous_normals, range_and_mean_normal, guided_normals);
 
+		int pathnum = 0;
 		for (TriMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end(); ++f_it)
 		{
 			int index = f_it->idx();		
 			
-			std::vector<std::vector<int> > facePaths;
-			computeGlobalPath(mesh, f_it, face_centroid, guided_normals, facePaths);
-			//sigma_r = calculateSigma(previous_normals, f_it, iter, sigma_s);
+			std::vector<std::vector<int> > &facePaths = allfacePaths[pathnum];// use fixed path
 
+			//std::vector<std::vector<int> > facePaths;
+			//computeGlobalPath(mesh, f_it, face_centroid, previous_normals, facePaths);
 
 			TriMesh::Normal filteredNormal(0.0, 0.0, 0.0);
-			//std::vector<double> sumAs;
-			//std::vector<double> sumRs;
-			//std::vector<int> neighbors;
 			for (int j = 0; j < facePaths.size(); ++j)
 			{
 				std::vector<int> &facePath = facePaths[j];
@@ -80,48 +96,92 @@ void PropagationMeshFiltering::updateFilteredNormalsLocalScheme(TriMesh &mesh, s
 				double weight = 0.0;
 				double sumA = 0.0;// adjacent photometric relationship
 				double sumR = 0.0;// photometric relationship
+
+				//-------------------------------------------------------------------------------------------------------------------
+				////---------------------------------------------------------------
+				////---------------             L2L2Spastial     ------------------
+				////---------------------------------------------------------------
+				//for (int k = (int)facePath.size() - 1; k > 0; --k)
+				//{
+				//	int preIndex = facePath[k];
+				//	int nexIndex = facePath[k - 1];
+				//	double distD = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
+				//	sumA += distD*distD * (face_centroid[nexIndex] - face_centroid[preIndex]).length();
+				//	double distR = (previous_normals[preIndex] - previous_normals[index]).length();
+				//	sumR += distR*distR * (face_centroid[nexIndex] - face_centroid[preIndex]).length();
+				//}
+				//weight = GaussianWeight(sqrt(sumA), sigma_r) * GaussianWeight(sqrt(sumR), sigma_r);
+				////--------why use previous_normals?
+				//filteredNormal += weight * face_area[neighborIdx] * previous_normals[neighborIdx];
+
+				//----------------------------------------------------------------------------------------------------------------------
+				////---------------------------------------------------------------
+				////---------------             L2L2             ------------------
+				////---------------------------------------------------------------
+				//for (int k = (int)facePath.size() - 1; k > 0; --k)
+				//{
+				//	int preIndex = facePath[k];
+				//	int nexIndex = facePath[k - 1];
+				//	double distD = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
+				//	sumA += distD*distD;
+				//	double distR = (previous_normals[preIndex] - previous_normals[index]).length();
+				//	sumR += distR*distR;
+				//}
+				//weight = GaussianWeight(sqrt(sumA), sigma_r) * GaussianWeight(sqrt(sumR), sigma_r);
+				////--------why use previous_normals?
+				//filteredNormal += weight * face_area[neighborIdx] * previous_normals[neighborIdx];
+
+				//--------------------------------------------------------------------------------------------------------------------------
+				//---------------------------------------------------------------
+				//---------------             L1L2             ------------------
+				//---------------------------------------------------------------
 				for (int k = (int)facePath.size() - 1; k > 0; --k)
 				{
 					int preIndex = facePath[k];
 					int nexIndex = facePath[k - 1];
-					double distD = (guided_normals[nexIndex] - guided_normals[preIndex]).length();
-					sumA += distD*distD;
-					double distR = (guided_normals[preIndex] - guided_normals[index]).length();
+					double distD = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
+					sumA += distD;
+					double distR = (previous_normals[preIndex] - previous_normals[index]).length();
 					sumR += distR*distR;
 				}
-
-				//sumAs.push_back(sumA);
-				//sumRs.push_back(sumR);
-				//neighbors.push_back(neighborIdx);
-
-				weight = GaussianWeight(sqrt(sumA), sigma_r) * GaussianWeight(sqrt(sumR), sigma_r);
-
+				weight = GaussianWeight(sumA, sigma_r) * GaussianWeight(sqrt(sumR), sigma_r);// 1_2范数
 				//--------why use previous_normals?
 				filteredNormal += weight * face_area[neighborIdx] * previous_normals[neighborIdx];
+
+				//--------------------------------------------------------------------------------------------------------------------------
+				////---------------------------------------------------------------
+				////---------------             L1L1             ------------------
+				////---------------------------------------------------------------
+				//for (int k = (int)facePath.size() - 1; k > 0; --k)
+				//{
+				//	int preIndex = facePath[k];
+				//	int nexIndex = facePath[k - 1];
+				//	double distD = (previous_normals[nexIndex] - previous_normals[preIndex]).length();
+				//	sumA += distD;
+				//	double distR = (previous_normals[preIndex] - previous_normals[index]).length();
+				//	sumR += distR;
+				//}
+				//weight = GaussianWeight(sumA, sigma_r) * GaussianWeight(sumR, sigma_r);// 1_1范数
+				////--------why use previous_normals?
+				//filteredNormal += weight * face_area[neighborIdx] * previous_normals[neighborIdx];
+				//-------------------------------------------------------------------------------------------------------------------------
 			}
-			//double sigma1 = calculateSigmaSandR(sumAs,sigma_s);
-			//double sigma2 = calculateSigmaSandR(sumRs,sigma_s);
-			//for (int neighbor_num = 0; neighbor_num < neighbors.size(); ++neighbor_num)
-			//{
-			//	double weight = GaussianWeight(sqrt(sumAs[neighbor_num]), sigma1) * GaussianWeight(sqrt(sumRs[neighbor_num]), sigma2);
-			//	filteredNormal += weight * face_area[neighbors[neighbor_num]] * previous_normals[neighbors[neighbor_num]];
-			//}
 
+			filteredNormal += face_area[index] * previous_normals[index];//itself
 			filtered_normals[index] = filteredNormal.normalize();
+			++pathnum;
 		}
-
 		// immediate update vertex position
 		updateVertexPosition(mesh, filtered_normals, vertex_iteration_number, false);
 
 		//checkBadFace(mesh);//对坏的面进行微小的扰动
-
 		// for debug
-		if (iter % 4 == 0)
-		{
-			data_manager_->setMesh(mesh);
-			std::stringstream ss;  ss << iter << ".obj";
-			data_manager_->ExportMeshToFile(ss.str());
-		}
+		//if (iter % 4 == 0)
+		//{
+		//	data_manager_->setMesh(mesh);
+		//	std::stringstream ss;  ss << iter << ".obj";
+		//	data_manager_->ExportMeshToFile(ss.str());
+		//}
 	}
 }
 
@@ -207,7 +267,7 @@ void PropagationMeshFiltering::initParameters()
 	parameter_set_->addParameter(QString("include central face"), true, QString("include central face"), QString("Include the central face of the neighbor or not."));
 
 	parameter_set_->addParameter(QString("Multiple(* avg face dis.)"), 3.0, QString("Multiple(* avg face dis.)"), QString("Radius for search geometrical neighbor of the face."),
-		true, 0.1, 10.0);
+		true, 0.1, 20.0);//最大值的设定
 	parameter_set_->addParameter(QString("Multiple(* sigma_s)"), 1.0, QString("Multiple(* sigma_s)"), QString("Standard deviation of spatial weight."),
 		true, 1.0e-9, 10.0);
 

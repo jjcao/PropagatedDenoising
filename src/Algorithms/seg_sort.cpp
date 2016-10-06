@@ -21,9 +21,9 @@ void Segmen::localProjection(const std::vector< std::vector<TriMesh::FaceHandle>
 			Projection temp;
 			temp.face_index = neighborf_index;
 			temp.p_point = neighborf_centroid - abs(centerf_normal | (neighborf_centroid - centerf_centroid))*centerf_normal;
-			temp.dist = (neighborf_centroid - centerf_centroid).length();
-			//------ using normal distance, not work well, almost the same result
-			//temp.dist = std::max((neighbotf_normal - centerf_normal).length(), std::numeric_limits<double>::epsilon());
+			//temp.dist = (neighborf_centroid - centerf_centroid).length();
+			//------ using normal distance
+			temp.dist = std::max((neighbotf_normal - centerf_normal).length(), std::numeric_limits<double>::epsilon());
 			temp.ring = j;
 
 			projection_sets.push_back(temp);
@@ -33,22 +33,24 @@ void Segmen::localProjection(const std::vector< std::vector<TriMesh::FaceHandle>
 }
 
 void Segmen::localProjection(const std::vector<TriMesh::FaceHandle> &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,
-	const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid)
+	const std::vector<TriMesh::Normal> &face_normals, int centerf_index)
 {
 	projection_sets.clear();
 
+	TriMesh::Point centerf_centroid = face_centroid[centerf_index];
+	TriMesh::Normal centerf_normal = face_normals[centerf_index];
 	for (int i = 0; i < face_neighbor.size(); ++i)
 	{
 		int neighborf_index = face_neighbor[i].idx();
 		TriMesh::Point neighborf_centroid = face_centroid[neighborf_index];
-		//TriMesh::Point neighbotf_normal = normals[neighborf_index];
+		TriMesh::Point neighbotf_normal = face_normals[neighborf_index];
 
 		Projection temp;
 		temp.face_index = neighborf_index;
 		temp.p_point = neighborf_centroid - abs(centerf_normal | (neighborf_centroid - centerf_centroid))*centerf_normal;
-		temp.dist = (neighborf_centroid - centerf_centroid).length();
-		//------ using normal distance, not work well, almost the same result
-		//temp.dist = (neighbotf_normal - centerf_normal).length();
+		temp.dist = std::max((neighborf_centroid - centerf_centroid).length(), std::numeric_limits<double>::epsilon());
+		//------ using normal distance
+		//temp.dist = std::max((neighbotf_normal - centerf_normal).length(), std::numeric_limits<double>::epsilon());
 
 		projection_sets.push_back(temp);
 	}
@@ -56,7 +58,8 @@ void Segmen::localProjection(const std::vector<TriMesh::FaceHandle> &face_neighb
 
 void Segmen::segmentation(const std::vector<TriMesh::Point> &fpoint)
 {
-	regions.clear(); regions.resize(6);
+	regions.clear(); 
+	regions.resize(6);
 
 	for (std::vector<Projection>::iterator p_iter = projection_sets.begin(); p_iter != projection_sets.end(); p_iter++)
 	{
@@ -109,10 +112,11 @@ void Segmen::segmentation(const std::vector<TriMesh::Point> &fpoint)
 		{
 			regions[5].push_back(*p_iter); continue;
 		}
-		if (area_coor1 >= 0 && area_coor2 >= 0 && area_coor3 >= 0)
-		{
-			continue;
-		}//6区结束
+		//if (area_coor1 >= 0 && area_coor2 >= 0 && area_coor3 >= 0)
+		//{
+		//	//regions[6].push_back(*p_iter); continue;
+		//	continue;
+		//}//6区结束
 	}//分区结束
 }
 
@@ -141,6 +145,14 @@ void Segmen::calculateSort()
 	for (int i = 0; i < regions.size(); ++i)
 	{
 		std::sort(regions[i].begin(), regions[i].end(), Comp1);
+	}
+}
+
+void Segmen::calculateSort3()
+{
+	for (int i = 0; i < regions.size(); ++i)
+	{
+		std::sort(regions[i].begin(), regions[i].end(), Comp3);
 	}
 }
 

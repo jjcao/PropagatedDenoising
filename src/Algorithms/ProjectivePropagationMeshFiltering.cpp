@@ -7,7 +7,8 @@ void ProjectivePropagationMeshFiltering::initParameters()
 
 void ProjectivePropagationMeshFiltering::setAllFaceNeighbor(TriMesh &mesh, FaceNeighborType face_neighbor_type, bool include_central_face, double radius)
 {
-	getAllFaceNeighbor(mesh, _allFaceNeighbor, face_neighbor_type, include_central_face, radius);	
+	//getAllFaceNeighbor(mesh, _allFaceNeighbor, face_neighbor_type, include_central_face, radius);
+	getAllFaceNeighbor(mesh, _allFaceNeighbor1, face_neighbor_type, include_central_face, radius);
 }
 
 void ProjectivePropagationMeshFiltering::computeGlobalPath(TriMesh &mesh, TriMesh::FaceIter sourceFaceIter, 
@@ -26,7 +27,11 @@ void ProjectivePropagationMeshFiltering::computeGlobalPath(TriMesh &mesh, TriMes
 
 	std::vector<Pathmark> pathms;
 	//--------FaceRingBased------//
-	std::vector<std::vector<TriMesh::FaceHandle> > &face_neighbor = _allFaceNeighbor[centerf_index];
+	//std::vector<std::vector<TriMesh::FaceHandle> > &face_neighbor = _allFaceNeighbor[centerf_index];
+	//calculateGlobalPath(face_neighbor, face_centroid, face_normals, centerf_index, fpoint, pathms);
+
+	//---------discard ring --------//
+	std::vector<TriMesh::FaceHandle> &face_neighbor = _allFaceNeighbor1[centerf_index];
 	calculateGlobalPath(face_neighbor, face_centroid, face_normals, centerf_index, fpoint, pathms);
 
 	facePaths.reserve(pathms.size());
@@ -42,6 +47,16 @@ void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector< 
 	_seg.localProjection(face_neighbor, face_centroid, face_normals, centerf_index);
 	_seg.segmentation(fpoint);
 	_seg.calculateSort();
+	_seg.calculateAllPath(centerf_index, pathms);
+}
+
+void ProjectivePropagationMeshFiltering::calculateGlobalPath(const std::vector<TriMesh::FaceHandle> &face_neighbor,
+	const std::vector<TriMesh::Point> &face_centroid, const std::vector<TriMesh::Normal> &face_normals, int centerf_index,
+	const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms)
+{
+	_seg.localProjection(face_neighbor, face_centroid, face_normals, centerf_index);
+	_seg.segmentation(fpoint);
+	_seg.calculateSort3();
 	_seg.calculateAllPath(centerf_index, pathms);
 }
 

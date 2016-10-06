@@ -28,13 +28,14 @@ public:
 
 	//---------------------------Radius interface----------------------//
 	void localProjection(const std::vector<TriMesh::FaceHandle> &face_neighbor, const std::vector<TriMesh::Point> &face_centroid,
-		const TriMesh::Normal &centerf_normal, const TriMesh::Point &centerf_centroid);
+		const std::vector<TriMesh::Normal> &face_normals, int centerf_index);
 
 	/*three points segment the place to seven regions*/
 	void segmentation(const std::vector<TriMesh::Point> &fpoint);
 
 	/*sort*/
 	void calculateSort();
+	void calculateSort3();
 
 	/* calculate all paths*/
 	void calculateAllPath(int centerf_index, std::vector<Pathmark> &pathms);

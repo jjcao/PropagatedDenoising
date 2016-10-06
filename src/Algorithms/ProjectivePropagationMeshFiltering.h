@@ -16,6 +16,9 @@ private:
 	void calculateGlobalPath(const std::vector< std::vector<TriMesh::FaceHandle> > &face_neighbor,
 		const std::vector<TriMesh::Point> &face_centroid, const std::vector<TriMesh::Normal> &face_normals, int centerf_index,
 		const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms);	
+	void calculateGlobalPath(const std::vector<TriMesh::FaceHandle> &face_neighbor,
+		const std::vector<TriMesh::Point> &face_centroid, const std::vector<TriMesh::Normal> &face_normals, int centerf_index,
+		const std::vector<TriMesh::Point> &fpoint, std::vector<Pathmark> &pathms);
 
 	virtual double calculateSigma(const std::vector<TriMesh::Normal> &face_normals, TriMesh::FaceIter sourceFaceIter, int iter, double smoothness);
 	
@@ -26,6 +29,7 @@ private:
 
 	Segmen _seg;
 	std::vector< std::vector<std::vector<TriMesh::FaceHandle> > > _allFaceNeighbor;
+	std::vector< std::vector<TriMesh::FaceHandle> > _allFaceNeighbor1;
 };
 
 #endif

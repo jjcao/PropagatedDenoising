@@ -11,10 +11,12 @@ Because the edge-preserving property of bilateral filter~\cite{tomasi1998bilater
 The papers \cite{fleishman2003bilateral} and ~\cite{jones2003non} apply bilateral filter to the mesh vertex positions as it is used in image denoising~\cite{durand2002fast}.
 \cite{zheng2011bilateral} employ the bilateral filter to the mesh face normals, then according the filtered normals the process of vertex updated is implemented.
 \cite{Solomon2014general} also perform mesh denoising by filtering the face normals, using a generalized cross-bilateral filter.
+The effectiveness of bilateral filter relies on the range function which reflects the local information of signal, and then applies the averaging weights as the filtered output.
+However, the difference between the input signal values $J_{p}$ and $J_{q}$ can not provides reliable prediction for that between the desired signal values $\bar{J_{p}}$ and $\bar{J_{q}}$.
 Our denoising algorithm also applies the similar approach which iterates face normal filtering and vertex updates.
 However, our method differs from \cite{zheng2011bilateral} and \cite{Solomon2014general} which both only consider the spatial and range distances that may smooth the weak edges,
 also is different from~\cite{Zhang2015Filter} which uses a joint bilateral filter on the normals that may break the sharp corners.
-As we build the connections which reflected in the geodesic path between face normals, obtaining the more accurate weight for filtering algorithm.
+As we build the connections between face normals through the geodesic path, obtaining the more accurate filtering weight for denoised algorithm.
 
 The two-stage process including filtering face normals and updating vertex positions has also been adapted by many famous work~\cite{yagou2002mesh, chen2005sharpness, sun2008random, Wang2015rolling}.
 The mainly differences between these methods is in their normal filtering strategies.

@@ -1,14 +1,14 @@
 \begin{abstract}
     The bilateral filter is a classical filtering operator with the goal of preserving edge structure while smoothing signals.
-    The reason it works is mainly on the spatial and range distances are enough close, but it ignores the local connections between signals.
+    The reason it works is mainly on the spatial and range distances are enough close, but it ignores the local relations between signals.
     In this paper, we introduce a intrinsic filter method for 2D manifold surfaces.
-    This approach builds the connections between desired signal and its neighbors shown in figure~\ref{Fig:relation}.
+    This approach builds the connections between desired signal and its neighbors.% shown in figure~\ref{Fig:relation}.
     Therefore, it has a outstanding power on filtering neighbor signal while preserving the important feature.
-    A novel filtering framework based on our intrinsic filter is proposed with application in mesh denoising.
+    A novel filtering model based on our intrinsic filter is proposed with application in mesh denoising.
     As the traditional mesh filtering, our framework also has two-stage process:
     first, we apply geodesic path to build the face normal connections, then filter the face normals basing two different accumulative distance weights.
-    afterwards, the vertex positions are updated according to the filtered face normals.
-    For accelerating this process, we also introduce a simple, fast and effective pattern to replace the expend of using geodesic path
+    Afterwards, the vertex positions are updated according to the filtered face normals.
+    For accelerating our intrinsic algorithm, we also introduce a simple, fast and effective pattern to compensate the time deficiency in using geodesic path.
     It performs well on a wide variety of meshes and is competitive with other state-of-the-art methods.
 
     %The Computational Visual Media Conference series, of which this is to be the first conference, is intended to provide a major new international forum for exchanging novel research ideas and significant %practical results both underpinning and applying Visual Media.
