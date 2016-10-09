@@ -1,43 +1,39 @@
 \section{Introduction}
 
 
-Due to the popularity of 3D scanners, meshes are becoming more and more accessible.
-However, the influence of environment and people makes the data contain a lot of high frequency noises.
-Mesh filtering is a vital preprocessing tool of updating vertex positions in a mesh to achieve perfect goals like denoising, smoothing or enhancement.
-It typically preserve the obvious geometric structures, while undesirable noise need be discarded.
-Although a variety of mesh filtering methods achieve satisfactory results \cite{jones2003non, zheng2011bilateral, he2013mesh, Zhang2015Filter, Wang2015rolling},
-they have a little imperfect results in dealing with the geometry features such as edges and corners.
+Due to the popularity of 3D scanners, meshes are becoming more and more accessible. However, noises from various sources are still unavoidable for many generated meshes.
+Mesh filtering becomes a vital tool for denoising. It can also be used for smoothing and texture removing.
+Although many mesh filters yield promising results \cite{jones2003non, zheng2011bilateral, he2013mesh, Zhang2015Filter, Wang2015rolling}, preserving various features when denoising remains a challenge.
 
+% Mesh filtering is a kind of signal filtering for 2D manifold.
+%Just like many 1D signal filters and 2D image filters,
+Many traditional signal or image filters replace the signal value at each sample by a weighted average of signal values from nearby samples, and only Euclidean distance between samples is considered when computing the weight between the current sample and one of its neighbours. Such filters fail to preserve features.
+The bilateral filter, introduced in \cite{tomasi1998bilateral}, is a famous edge-preserving image filter. Its weights depend not only on the spatial closeness, but also on the intensity difference.
+Recently, the guided filters \cite{Petschnigg2004, he2010guided} further set the filtering weights using the intensity differences from another image and yield better edge-preservation.
+Due to their success in image processing and computational photography,
+researchers make many attempts expand them to mesh denoising and smoothing \cite{jones2003non, zheng2011bilateral, Solomon2014general, Zhang2015Filter}.
 
-The bilateral filter, introduced in \cite{tomasi1998bilateral}, is a famous edge-preserving image filter, which prefers near values to distant values in both domain and range.
-Unlike bilateral filter, the guided filters \cite{Petschnigg2004, he2010guided} set the filtering weights using the intensity difference from another image and has better edge-preserving property.
-Due to their success in image processing and computational photography, 
-researchers make many attempts use them to geometry processing such as mesh denoising and smoothing \cite{jones2003non, zheng2011bilateral, Solomon2014general, Zhang2015Filter}. 
-The attempt, considering normals as a surface signal defined over the original mesh, makes a great process in mesh denoising.
-The main reason is that the normal differences are very bigger when crossing the feature edges.
-However, they still have the disadvantage in dealing with the narrow edges, which are important and widespread feature in meshes.
-For example, choosing a large neighborhood will result in smoothing the edge, while selecting a small one would limit the ability in removing denoise.
-Their common defect is that computing the filtering weight only considers the signal differences between the current point and one of its neighbours, ignoring the relation of the two points.
-In our intrinsic filtering model, we build the connections through a geodesic path to effectively solve this problem.
+However, the above methods have two defects. First, choosing a large neighborhood will result in smoothed edges, while selecting a small one would limit the ability of removing noise.
+Second, they can not handle close-by edges well. When there are close-by edges, samples with both close Euclidean distance and range value may come from different regions separated by another narrow region. Hence, for such sample pairs, both of them should contribute nothing to the filtering of the other one, shown in the figure~\ref{Fig:relation}.
+%(\jj{an illustrative figure is needed. current figure is not good. an 1d illustration is better.})
+The reason behind is that these methods compute the filtering weight between a pair of samples only using the properties of the two samples. The samples between them are ignored. Hence we wish to take the geodesic path between them into consideration to solve above problems effectively.
+Although the geodesic filter~\cite{grazzini2009edge} and propagated image filter \cite{Chang2015propagated} also use the samples on the geodesic path when computing weights for superior edge-preservation. They are not expanded to mesh filtering and they do not provide a generalized model for the problem.
 
+\begin{figure}
+\centering
+\includegraphics[width = 5.0cm]{results/Relation/relation.jpg}
+\vspace{-0.5mm}
+\caption{ When filtering the signals on $p$ and $q$, if the $p$ and $q$ are close and their signal values are equal, classical filters offer a large weight.
+It is not reasonable. Our method solves this problem by the middle signal value on $s$. }
+\label{Fig:relation}
+\end{figure}
 
-Although the geodesic filter~\cite{grazzini2009edge} and propagated image filter \cite{Chang2015propagated} discovers the shortcoming, 
-estimate the filtering weight accumulated differences along the values on the geodesic path.
-Their difference is \cite{Chang2015propagated} considers two kinds of accumulative difference, another only thinks of one kind. 
-As the accumulative difference has the ability to adapt the image context, these two filters both have a superior edge-preserving property.
-Nevertheless, their work is only on the image denoising.
-They don't provide a generalized model for solving similar problems.
-In our paper, we introduce a universal filtering method for the geometry signal (position, normal, curvature and so on) on 2d manifold surface.
-Afterwards, we apply our model to mesh denoising and verify the effectiveness of our method.
-Furthermore, based on the mesh's own properties, the operation of determining the filtering weight is more reasonable than in images. 
-In addition, \cite{grazzini2009edge} and \cite{Chang2015propagated} are both a special case of our model.
-
-
-In this paper, based on the theory of signal filter, we propose a generalized intrinsic filtering model for 2D manifold. 
-For applying this model to mesh denoising, 
-similar to the previous method, we consider face normals as a surface signal defined over a original mesh.
-Then we calculates the filtering weight through using accumulated normal difference along the geodesic path connecting face barycenters.
-Mesh features are better retained. 
-In addition, we introduce a particular pattern for solving the time deficiency in applying geodesic algorithm and obtain even better experimental results.
-The effectiveness of our approach is illustrated by extensive experimental results in mesh denoising.
-
+In our paper, we introduce an intrinsic filtering model for geometry signal (position, normal, curvature and so on) on 2D manifold. 
+It is an universal model and many state-of-the-art filters are special cases of it, such as bilateral filter, geodesic filter and propagated filter. 
+We estimate the weight between the current point and its neighbor based on the integral of the p norm of some properties' difference along the geodesic path between them, 
+which yields to better edge-preservation when denoising and smoothing. 
+Based on the generalized filtering model, we present a novel mesh denoising method following the common meshing denoising framework. 
+The position of vertices are updated after filtering the face normals, and the two steps are iterated until achieving a satisfactory results.
+However, the generation of geodesic path for each face and its neighbors during all the iterations are extremely time consuming. We design a particular pattern on each face's tangent plane to approximate the integral along the geodesic path. It is very efficient and yields even better experimental results.
+Besides, considering that even geometrically complex shapes can be characterized by a rather small number of features, which means large normal differences are sparse, L1 norm is employed in the integral.
+Benefiting from the intrinsic filtering model and the above two enhancements for meshes, extensive experiments illustrate the efficacy of our mesh denoising approach and it achieves more desirable results comparing with the state-of-the-art mesh denoising methods.

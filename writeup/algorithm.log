@@ -1,0 +1,28 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2015.9.8)  6 OCT 2016 14:52
+entering extended mode
+**F:/01*Liu*Bin/01*My*Study/05*Filter*Mesh*or*Point*cloud/Latex/egPublStyle-con
+f2017_OK/egPublStyle-conf2017/algorithm.tex
+
+("F:/01 Liu Bin/01 My Study/05 Filter Mesh or Point cloud/Latex/egPublStyle-con
+f2017_OK/egPublStyle-conf2017/algorithm.tex"
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for loaded.
+! Undefined control sequence.
+l.1 \section
+            {Intrinsic filtering for 2D manifold surface}
+? 
+! Emergency stop.
+l.1 \section
+            {Intrinsic filtering for 2D manifold surface}
+End of file on the terminal!
+
+ 
+Here is how much of TeX's memory you used:
+ 7 strings out of 495354
+ 418 string characters out of 3182740
+ 44842 words of memory out of 3000000
+ 3276 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 5i,0n,1p,177b,8s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!
