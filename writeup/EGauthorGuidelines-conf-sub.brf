@@ -6,17 +6,16 @@
 \backcite {Chang2015propagated}{{1}{1}{section.1}}
 \backcite {Wang2008comprehensive}{{2}{2}{section.2}}
 \backcite {tomasi1998bilateral}{{2}{2}{section.2}}
-\backcite {oh2001image, durand2002fast, Barash2004common, Wang2014decoupling}{{2}{2}{section.2}}
 \backcite {fleishman2003bilateral, jones2003non, zheng2011bilateral, Solomon2014general}{{2}{2}{section.2}}
-\backcite {Wang2006bilateral}{{2}{2}{section.2}}
 \backcite {fleishman2003bilateral}{{2}{2}{section.2}}
 \backcite {jones2003non}{{2}{2}{section.2}}
-\backcite {durand2002fast}{{2}{2}{section.2}}
+\backcite {jones2003non}{{2}{2}{section.2}}
 \backcite {zheng2011bilateral}{{2}{2}{section.2}}
 \backcite {Solomon2014general}{{2}{2}{section.2}}
-\backcite {zheng2011bilateral}{{2}{2}{section.2}}
-\backcite {Solomon2014general}{{2}{2}{section.2}}
+\backcite {eisemann2004flash, Petschnigg2004}{{2}{2}{section.2}}
 \backcite {Zhang2015Filter}{{2}{2}{section.2}}
+\backcite {Zhang2015Filter}{{2}{2}{section.2}}
+\backcite {zheng2011bilateral, Solomon2014general, Zhang2015Filter}{{2}{2}{section.2}}
 \backcite {yagou2002mesh, chen2005sharpness, sun2008random, Wang2015rolling}{{2}{2}{section.2}}
 \backcite {Zhang2014rolling}{{2}{2}{section.2}}
 \backcite {yagou2002mesh}{{2}{2}{section.2}}
@@ -29,16 +28,17 @@
 \backcite {wei2015bi}{{2}{2}{section.2}}
 \backcite {he2013mesh}{{2}{2}{section.2}}
 \backcite {Wang2014decoupling}{{2}{2}{section.2}}
-\backcite {tomasi1998bilateral, grazzini2009edge, Chang2015propagated}{{3}{3.1}{equation.3.4}}
 \backcite {tomasi1998bilateral}{{3}{3.1}{equation.3.4}}
 \backcite {grazzini2009edge}{{3}{3.1}{equation.3.5}}
-\backcite {Chang2015propagated}{{3}{3.1}{equation.3.6}}
 \backcite {Wang2014decoupling}{{3}{2}{figure.2}}
+\backcite {Chang2015propagated}{{3}{3.1}{equation.3.6}}
+\backcite {Chang2015propagated}{{3}{3.1}{equation.3.7}}
+\backcite {Chang2015propagated}{{3}{3.1}{equation.3.7}}
 \backcite {tomasi1998bilateral, grazzini2009edge, Chang2015propagated}{{3}{3.1}{figure.2}}
-\backcite {Zhang2015Filter}{{3}{3.2}{equation.3.9}}
+\backcite {Zhang2015Filter}{{4}{3.2}{equation.3.9}}
 \backcite {sun2007fast}{{4}{3.2}{figure.4}}
-\backcite {fleishman2003bilateral}{{5}{5.2}{subsection.5.2}}
-\backcite {jones2003non, sun2007fast, zheng2011bilateral, Zhang2015Filter}{{5}{5.2}{subsection.5.2}}
+\backcite {fleishman2003bilateral, jones2003non}{{5}{5.2}{subsection.5.2}}
+\backcite {sun2007fast, zheng2011bilateral, Zhang2015Filter}{{5}{5.2}{subsection.5.2}}
 \backcite {he2013mesh}{{5}{5.2}{subsection.5.2}}
 \backcite {zheng2011bilateral}{{5}{5.2}{subsection.5.2}}
 \backcite {belyaev2003comparison}{{5}{5.2}{subsection.5.2}}
@@ -65,13 +65,13 @@
 \backcite {Zhang2015Filter}{{6}{5.2}{figure.8}}
 \backcite {fleishman2003bilateral, jones2003non, sun2007fast, zheng2011bilateral}{{6}{5.2}{figure.8}}
 \backcite {he2013mesh, Zhang2015Filter}{{6}{5.2}{figure.8}}
-\backcite {fleishman2003bilateral}{{7}{1}{table.1}}
-\backcite {jones2003non}{{7}{1}{table.1}}
-\backcite {sun2007fast}{{7}{1}{table.1}}
-\backcite {zheng2011bilateral}{{7}{1}{table.1}}
-\backcite {he2013mesh}{{7}{1}{table.1}}
-\backcite {Zhang2015Filter}{{7}{1}{table.1}}
 \backcite {zheng2011bilateral}{{7}{5.3}{subsection.5.3}}
+\backcite {fleishman2003bilateral}{{8}{1}{table.1}}
+\backcite {jones2003non}{{8}{1}{table.1}}
+\backcite {sun2007fast}{{8}{1}{table.1}}
+\backcite {zheng2011bilateral}{{8}{1}{table.1}}
+\backcite {he2013mesh}{{8}{1}{table.1}}
+\backcite {Zhang2015Filter}{{8}{1}{table.1}}
 \backcite {fleishman2003bilateral}{{8}{9}{figure.9}}
 \backcite {jones2003non}{{8}{9}{figure.9}}
 \backcite {sun2007fast}{{8}{9}{figure.9}}

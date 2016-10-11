@@ -1,0 +1,244 @@
+\section{Supplements}
+
+\begin{table*}[ht]
+\caption{Quantitative comparisons using two error metrics.}
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Model & Error  &  \cite{fleishman2003bilateral}  & \cite{jones2003non} & \cite{sun2007fast} & \cite{zheng2011bilateral} & \cite{he2013mesh} & \cite{Zhang2015Filter} & ours \\
+\hline\hline
+
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{sphere}
+& $N_{mean}$ & 12.5796 & 17.3618 & 11.8920 & \textbf{6.7047} & 12.9566 & 10.1697 & 7.2186 \\
+\cline{2-9}
+& $V_{mean}$ & 0.1551 & 0.0846 & 0.0888 & 0.0448 & 0.1241 & 0.0565 & \textbf{0.0446}\\
+\hline
+
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{block}
+& $N_{mean}$ & 12.7155 & 13.8501 & 5.8023 & 5.3062 & 4.9734 & 3.5720 & \textbf{3.1134} \\
+\cline{2-9}
+& $V_{mean}$ & 0.1798 & 0.1335 & 0.0821 & 0.0680 & 0.1160 & 0.0541 & \textbf{0.0511}\\
+\hline
+
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Nicolo}
+& $N_{mean}$ & 8.8758 & 7.1305 & 6.3777 & \textbf{5.7978} & 7.5825 & 6.5012 & 5.9324 \\
+\cline{2-9}
+& $V_{mean}$ & 0.4604 & 0.3333 & 0.3184 & 0.2590  & 0.3475 & 0.2605 & \textbf{0.2499}\\
+\hline
+
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{twelve}
+& $N_{mean}$ & 11.7204 & 11.0930 & 7.4519 & 7.3683 & 8.4624 & 2.7542 & \textbf{1.8934} \\
+\cline{2-9}
+& $V_{mean}$ & 0.0208 & 0.0173 & 0.0121 & 0.0125  & 0.0201 & 0.0.0062 & \textbf{0.0054}\\
+\hline
+
+\end{tabular}
+\end{center}
+\end{table*}
+
+
+
+\begin{table*}[ht]
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & Fandisk(0.7)  & Julius & Sphere & Bunny & Nicolo & Block & Twelve & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $k_{iter}$ & 10 & 10 & 15 & 17 & 12 & 12 & 15 & 12 & 10 & 13 & 100 \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for Fleishman~\cite{fleishman2003bilateral}.}
+\end{table*}
+
+\begin{table*}[ht]
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & Fandisk(0.7)  & Julius & Sphere & Bunny & Nicolo & Block & Twelve & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\sigma_f/\|e\|$ & 1.3 & 1.6 & 1.3 & 1.8 & 1.2 & 1.4 & 1.3 & 1.2 & 1.2 & 1.3 & 3.8 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\sigma_g/\|e\|$ & 1.4 & 1.5 & 1.4 & 1.5 & 1.5 & 1.6 & 1.2 & 1.4 & 1.5 & 1.2 & 2.8 \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for Jones~\cite{jones2003non}.}
+\end{table*}
+
+\begin{table*}[ht]
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & Fandisk(0.7)  & Julius & Sphere & Bunny & Nicolo & Block & Twelve & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $T$ & 0.55 & 0.3 & 0.6 & 0.55 & 0.5 & 0.5 & 0.4 & 0.4 & 0.5 & 0.35 & 0.4 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $k_{iter}$ & 20 & 30 & 10 & 30 & 5 & 8 & 30 & 15 & 6 & 4 & 20 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $v_{iter}$ & 40 & 20 & 10 & 20 & 20 & 8 & 20 & 10 & 8 & 4 & 20 \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for Sun~\cite{sun2007fast}.}
+\end{table*}
+
+\begin{table*}[ht]
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|} %% this creates eight columns also can be "c" and "r", "|" representative inserting 竖线
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & Fandisk(0.7)  & Julius & Sphere & Bunny & Nicolo & Block & Twelve & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\sigma_s$ & 0.35 & 0.4 & 0.45 & 0.45 & 0.5 & 0.45 & 0.35 & 0.33 & 0.4 & 0.35 & 0.35 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $k_{iter}$ & 25 & 50 & 6 & 10 & 6 & 6 & 45 & 40 & 6 & 4 & 20 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $v_{iter}$ & 20 & 20 & 4 & 8 & 20 & 6 & 20 & 20 & 6 & 4 & 10 \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for Zheng~\cite{zheng2011bilateral}.}
+\end{table*}
+
+\begin{table*}[ht]
+\small
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|} %% this creates eight columns also can be "c" and "r", "|" representative inserting 竖线
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & Fandisk(0.7)  & Julius & Sphere & Bunny & Nicolo & Block & Twelve & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\lambda$ & 0.01 & 0.01 & 0.000003 & 0.1 & 0.000004 & 0.6 & 0.55 & 5 & 0.0005 & 0.0035 & 0.0001 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\alpha_0$ & 0.00346 & 1.0 & 0.00107 & 0.00206 & 1.0 & 0.00149 & 0.00389 & 0.00351 & 0.000924 & 0.000809 & 0.000912 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\beta_0$ & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 & 0.001 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\mu_\alpha$ & 0.5 & 0.9 & 0.5 & 0.5 & 0.8 & 0.5 & 0.5 & 0.5 & 0.5 & 0.5 & 0.5 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\mu$ & 1.414 & 1.414 & 1.414 & 1.414 & 1.414 & 1.414 & 1.414 & 1.2 & 1.414 & 1.414 & 1.414 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\beta_{max}$ & 1000 & 1000 & 1000 & 1000 & 1000 & 1000 & 1000 & 1000 & 1000 & 1000 & 1000  \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for He~\cite{he2013mesh}.}
+\end{table*}
+
+\begin{table*}[ht]
+\small
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|} %% this creates eight columns also can be "c" and "r", "|" representative inserting 竖线
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & Fandisk(0.7)  & Julius & Sphere & Bunny & Nicolo & Block & Twelve & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $r$ & 0.12(2$\times$) & 0.18(2.6$\times$) & - & 0.8(2$\times$) & 0.015(2.7$\times$) & 3.4(2$\times$) & 0.8(2$\times$) & 0.116(2$\times$) & 0.12(2$\times$) & 0.6(2$\times$) & 0.00564(2$\times$) \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\sigma_r$ & 0.25 & 0.3 & 0.45 & 0.45 & 0.55 & 0.35 & 0.3 & 0.2 & 0.3 & 0.35 & 0.4 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $k_{iter}$ & 25 & 50 & 5 & 30 & 4 & 6 & 40 & 75 & 3 & 4 & 20 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $v_{iter}$ & 20 & 20 & 4 & 20 & 15 & 6 & 30 & 20 & 2 & 4 & 10 \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for Zhang~\cite{Zhang2015Filter}.}
+\end{table*}
+
+\begin{table*}[ht]
+\small
+\label{Tab:1}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|} %% this creates eight columns also can be "c" and "r", "|" representative inserting 竖线
+\hline
+\rule[-1ex]{0pt}{3.5ex}  Parameter & Fandisk(0.3)  & \jj{Fandisk(0.7)}  & Julius & \jj{Sphere} & Bunny & \jj{Nicolo} & \jj{Block} & \jj{Twelve} & Angel & Rabbit & Iron \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $r$ & 0.12(4$\times$) & 0.18(2.6$\times$) & - & 0.8(2$\times$) & 0.015(2.7$\times$) & 3.4(2$\times$) & 0.8(2$\times$) & 0.116(3$\times$) & 0.12(3$\times$) & 0.6(3$\times$) & 0.00564(2$\times$) \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $\sigma_r$ & 0.34 & 0.3 & 0.78 & 0.45 & 0.55 & 0.35 & 0.3 & 0.2 & 0.2 & 0.35 & 0.4 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $k_{iter}$ & 30 & 50 & 5 & 4 & 4 & 6 & 40 & 75 & 4 & 4 & 20 \\
+\hline
+\rule[-1ex]{0pt}{3.5ex} $v_{iter}$ & 2 & 20 & 4 & 5 & 15 & 6 & 30 & 20 & 4 & 3 & 3 \\
+\hline
+
+\end{tabular}
+\end{center}
+\caption{Parameters used for ours.}
+\end{table*}
+
+
+Explanation of parameters
+
+
+\begin{itemize}
+
+\item Fleishman~\cite{fleishman2003bilateral}
+\begin{itemize}
+\item[-] $k_{iter}$: number of iterations.
+\end{itemize}
+
+\item Jones~\cite{jones2003non}
+\begin{itemize}
+\item[-] $\sigma_f/\|e\|$, $\sigma_g/\|e\|$: parameters that determine the variance for spatial and range kernels, with $\|e\|$ being the average edge length.
+\end{itemize}
+
+\item Sun~\cite{sun2007fast}
+\begin{itemize}
+\item[-] $T$: threshold for controlling the averaging weights (see Equation (8) of Sun~\cite{sun2007fast}).
+\item[-] $k_{iter}$: number of iterations for updating normals.
+\item[-] $v_{iter}$: number of iterations for a vertex update.
+\end{itemize}
+
+\item Local scheme of Zheng~\cite{zheng2011bilateral}
+\begin{itemize}
+\item[-] $\sigma_s$: variance parameter for the spatial kernel.
+\item[-] $k_{iter}$: number of iterations for updating normals.
+\item[-] $v_{iter}$: number of iterations for a vertex update.
+\end{itemize}
+
+\item He~\cite{he2013mesh}
+\begin{itemize}
+\item[-] $\lambda$: weight for the $L_0$ term in the target function.
+\item[-] $\alpha_0, \beta_0$: initial values for $\alpha$ and $\beta$ in Algorithm 1 of He~\cite{he2013mesh}.
+\item[-] $\mu_\alpha, \mu$: update ratios for $\alpha$ and $\beta$.
+\item[-] $\beta_{max}$: maximum value of $\beta$.
+\end{itemize}
+
+\item Zhang~\cite{Zhang2015Filter}
+\begin{itemize}
+\item[-] $r$: radius for the geometrical neighborhood, also shown as the ratio with respect to the average
+distance between neighboring face barycenter; not applicable if a topological neighborhood is
+used.
+\item[-] $\sigma_r$: variance of the range kernel.
+\item[-] $k_{iter}$: number of iterations for updating normals.
+\item[-] $v_{iter}$: number of iterations for a vertex update.
+\end{itemize}
+
+
+\item ours
+\begin{itemize}
+\item[-] $r$: radius for the geometrical neighborhood, also shown as the ratio with respect to the average
+distance between neighboring face barycenter; 
+\item[-] $\sigma_r$ and $\sigma_s$: variances of two kind of accumulative different along the geodesic path.
+\item[-] $k_{iter}$: number of iterations for updating normals.
+\item[-] $v_{iter}$: number of iterations for a vertex update.
+\end{itemize}
+
+
+\end{itemize}
+
+
+

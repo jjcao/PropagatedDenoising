@@ -1,0 +1,11 @@
+del *.aux
+del *.bak
+del *.log
+del *.toc
+del *.out
+del *.nav
+del *.snm
+del *.blg
+del *.bbl
+del *.synctex
+del ctextemp*.*

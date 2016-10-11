@@ -1,38 +1,47 @@
 \section{Relate work}
 
-The rise of 3D scanning devices makes captured meshes become more and more easier.
-However, as the influence of light or devices, meshes which are taken often contain high-frequency noises.
-Thus mesh denoising, as an important tool of geometry processing, becomes a popular study point~\cite{Wang2008comprehensive}.
-Due to the large amount of research work in this field, we introduce some methods that have similarities with ours.
+Mesh denoising, as a basic tool for geometry processing, has been under the attention of researchers all the time~\cite{Wang2008comprehensive}.
+Due to the large amount of research work in this field, we only introduce some methods highly related to ours. 
+Most of these methods are based on the weighted average on the local neighborhood of a mesh.
 
-The purpose of mesh denoising is removing the noise without damaging the true structure.
-Because the edge-preserving property of bilateral filter~\cite{tomasi1998bilateral}, it is widely used in image processing~\cite{oh2001image, durand2002fast, Barash2004common, Wang2014decoupling} and geometry processing such as mesh denoising~\cite{fleishman2003bilateral, jones2003non, zheng2011bilateral, Solomon2014general} and mesh feature enhancement~\cite{Wang2006bilateral}.
+The purpose of mesh denoising is to remove the noise without damaging the true geometry structure, like edges and corner.
+After the bilateral filter is introduced in~\cite{tomasi1998bilateral}, 
+it is extended in mesh denoising~\cite{fleishman2003bilateral, jones2003non, zheng2011bilateral, Solomon2014general} because its outstanding ability.
+Fleishman et al~\cite{fleishman2003bilateral} and ~\cite{jones2003non} apply bilateral filter to the mesh vertex positions and perform the similar neighborhood weighted average strategy.
+The difference is that~\cite{jones2003non} estimates vertex positions through predicting the vertex tangent plane.
 
-The papers \cite{fleishman2003bilateral} and ~\cite{jones2003non} apply bilateral filter to the mesh vertex positions as it is used in image denoising~\cite{durand2002fast}.
-\cite{zheng2011bilateral} employ the bilateral filter to the mesh face normals, then according the filtered normals the process of vertex updated is implemented.
-\cite{Solomon2014general} also perform mesh denoising by filtering the face normals, using a generalized cross-bilateral filter.
-The effectiveness of bilateral filter relies on the range function which reflects the local information of signal, and then applies the averaging weights as the filtered output.
-However, the difference between the input signal values $J_{p}$ and $J_{q}$ can not provides reliable prediction for that between the desired signal values $\bar{J_{p}}$ and $\bar{J_{q}}$.
-Our denoising algorithm also applies the similar approach which iterates face normal filtering and vertex updates.
-However, our method differs from \cite{zheng2011bilateral} and \cite{Solomon2014general} which both only consider the spatial and range distances that may smooth the weak edges,
-also is different from~\cite{Zhang2015Filter} which uses a joint bilateral filter on the normals that may break the sharp corners.
-As we build the connections between face normals through the geodesic path, obtaining the more accurate filtering weight for denoised algorithm.
+Due to the facet normal can better display the local feature of mesh, other researchers apply filtering methods to the normal field, 
+then recover the surface by the relation of face vertices and face normal.
+\cite{zheng2011bilateral} employ the bilateral filter to the mesh face normals, then the process of vertex updated is implemented according the filtered normals.
+\cite{Solomon2014general} also perform mesh denoising by filtering the face normals, but they use another filter rule, a generalized cross-bilateral filter.
+The effectiveness of bilateral filter mainly relies on the range function which reflects the local information of signal, and then applies the averaging weights as the filtered output.
+However, the difference between the input signal can not provides reliable prediction for that between the desired signal, especially in the region that separated by edge structure.
+To solve this problem, inspired by the image joint bilateral filter~\cite{eisemann2004flash, Petschnigg2004}, 
+\cite{Zhang2015Filter} constructs a mesh joint filter method by estimating the normal of facets in a local region and achieves big success.
+However, the construction method of \cite{Zhang2015Filter} may appear ambiguity in the sharp corners.
+These methods \cite{zheng2011bilateral, Solomon2014general, Zhang2015Filter} only consider the spatial and range distances between a pair of face barycenters.
+They may damage the weak edges because of the small range distance and smooth the sharp corners.
 
 The two-stage process including filtering face normals and updating vertex positions has also been adapted by many famous work~\cite{yagou2002mesh, chen2005sharpness, sun2008random, Wang2015rolling}.
-The mainly differences between these methods is in their normal filtering strategies.
-Mean and median filtering and rolling guidance filter~\cite{Zhang2014rolling} are applied in~\cite{yagou2002mesh} and \cite{Wang2015rolling} respectively.
-\cite{chen2005sharpness} automatically select filters according the mesh local sharpness.
+The mainly difference among these methods is their normal filtering strategies.
+Mean and median filtering and rolling guidance filter~\cite{Zhang2014rolling} are applied in~\cite{yagou2002mesh} and \cite{Wang2015rolling}, respectively.
+\cite{chen2005sharpness} automatically selects filters according the mesh local sharpness.
 In \cite{sun2008random}, face normal filtering is performed by weighted averaging of normals based on the concept of random walks.
+Our denoising algorithm also applies the similar approach which iterates face normal filtering and vertex updates.
+But, we build the relations of face normals between a pair of face barycenters connected by a geodesic path, obtaining the more accurate filtering weight for denoising algorithm.
 
 Another type of denoising methods employ different strategies to filter the type of vertices which belonging to corner, edge or flat areas on a mesh.
-The paper \cite{bian2011feature} classify the vertices based on the volume integral invariant
-while \cite{fan2010robust} uses a local quadric model to fit the vertices and curvature tensor for obtaining the types of vertices.
-These two papers \cite{wang2012cascaded} and \cite{wei2015bi} apply different normal estimation strategies to remove noise.
+\cite{bian2011feature} classifies the vertex based on the volume integral invariant,
+while \cite{fan2010robust} uses a local quadric model to fit the vertex and curvature tensor for obtaining the types of vertices.
+Wang et al \cite{wang2012cascaded} use projection techniques to update each vertex of the mesh.
+Wei et al \cite{wei2015bi} apply the normal tensor voting strategy to classify the vertex. 
 
-Other researchers \cite{he2013mesh} apply sparsity optimization to mesh denoising and get a success because the sharp structures are usually sparse on the mesh.
-They apply $L_0$ minimization to an edge-based Laplacian operator and effectively preserve the sharp structure of mesh.
-However, the optimization algorithm prefer flat shapes and may not be suitable for complex meshes.
-The paper \cite{Wang2014decoupling} uses $L_1$ optimization to recover sharp structures from noisy meshes and also has above-mentioned problems.
+
+Recently, sparsity optimization technique is used in mesh denoising, and obtains satisfactory result.
+The reason behind is that mesh structures are usually sparse.
+\cite{he2013mesh} applies $L_0$ minimization to an edge-based Laplacian operator and effectively preserve the sharp structure of mesh.
+However, the optimization algorithm prefers flat shapes and may not be suitable for complex meshes.
+Wang et al \cite{Wang2014decoupling} use $L_1$ optimization to recover sharp structures from noisy meshes and also has above-mentioned problems.
 
 
 

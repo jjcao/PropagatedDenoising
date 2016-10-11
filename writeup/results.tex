@@ -14,7 +14,7 @@
 \includegraphics[width = 7.5cm]{results/Radius/radius.jpg}
 \vspace{-1mm}
 \caption{ Denoising results using different values of $r$ with other parameters fixed ($k_{iter} = 75$, $v_{iter} = 2$, $\sigma_r = 0.28$).
-The corresponding error $E_v$ is 0.0049, 0.0038 and 0.0030, $E_n$ is 2.35, 1.67 and 1.00 respectively.\jj{change line graph?}  }
+The corresponding error $E_v$ is 0.0049, 0.0038 and 0.0030, $E_n$ is 2.35, 1.67 and 1.00 respectively.  }
 \label{Fig:radius}
 \end{figure}
 
@@ -65,7 +65,8 @@ The reason is that some one of six regions provides more reliable normal estimat
 
 \subsection{Results and comparisons}
 
-In the following, we compare our mesh denoising strategy with other methods basing the vertex filtering~\cite{fleishman2003bilateral}, normal filtering~\cite{jones2003non, sun2007fast, zheng2011bilateral, Zhang2015Filter} and $L_0$ minimization~\cite{he2013mesh} on synthetic and real noisy meshes.
+In the following, we compare our mesh denoising strategy with other methods basing the vertex filtering~\cite{fleishman2003bilateral, jones2003non},
+normal filtering~\cite{sun2007fast, zheng2011bilateral, Zhang2015Filter} and $L_0$ minimization~\cite{he2013mesh} on synthetic and real noisy meshes.
 \cite{zheng2011bilateral} proposes two denoising scheme: a local scheme and a global scheme.
 Its local method uses bilateral normal filtering strategy and its global method solves the denoising problem by minimizing a energy function.
 In this paper, we only compare with their local scheme.
@@ -265,19 +266,19 @@ The detail of our and their parameters can be found in the supplementary materia
 \rule[-1ex]{0pt}{3.5ex}  Model & Error  &  \cite{fleishman2003bilateral}  & \cite{jones2003non} & \cite{sun2007fast} & \cite{zheng2011bilateral} & \cite{he2013mesh} & \cite{Zhang2015Filter} & ours \\
 \hline\hline
 
-\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Octahedron (Fig~\ref{Fig:octahedron})}
-& \jj{$E_n$} & 12.81 & 10.65 & 6.85 & 5.27 & 3.33 & 3.36 & \textbf{1.00} \\
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Octahedron}
+& $E_n$ & 12.81 & 10.65 & 6.85 & 5.27 & 3.33 & 3.36 & \textbf{2.03} \\
 \cline{2-9}
-& \jj{$E_v(\times10^{-3})$} & 28.02 & 14.70 & 10.71 & 6.28 & 10.81 & 4.90 & \textbf{3.02}\\
+& $E_v(\times10^{-3})$ & 28.02 & 14.70 & 10.71 & 6.28 & 10.81 & 4.90 & \textbf{2.91}\\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Fandisk (Fig~\ref{Fig:datasets})}
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Fandisk}
 & $E_n$ & 9.73 & 9.82 & 4.04 & 3.35 & 5.53 & 2.62 & \textbf{2.27} \\
 \cline{2-9}
 & $E_v(\times10^{-3})$ & 18.14 & 15.10 & 11.02 & 8.72 & 18.79 & \textbf{6.29} & 6.35\\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Prism (Fig~\ref{Fig:datasets})}
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Prism}
 & $E_n$ & 4.98 & 4.48 & 3.29 & 3.87 & 0.71 & 0.87 & \textbf{0.46} \\
 \cline{2-9}
 & $E_v(\times10^{-2})$ & 11.89 & 10.46 & 7.45 & 7.9  & 3.42 & 4.09 & \textbf{2.77}\\
@@ -289,13 +290,13 @@ The detail of our and their parameters can be found in the supplementary materia
 %& $E_v(\times10^{-2})$ & 15.51 & 8.46 & 8.88 & 4.48 & 12.41 & 5.65 & \textbf{4.37}\\
 %\hline
 
-\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Bunny (Fig~\ref{Fig:datasets})}
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Bunny}
 & $E_n$ & 6.93 & 5.81 & 5.89 & 5.68 & 7.21 & 5.35 & \textbf{5.11} \\
 \cline{2-9}
 & $E_v(\times10^{-4})$ & 18.36 & 9.24 & 9.98 & 9.35 & 10.65 & 7.61 & \textbf{7.26}\\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Julius (Fig~\ref{Fig:datasets})}
+\rule[-1ex]{0pt}{3.5ex}  \multirow{2}{*}{Julius}
 & $E_n$ & 7.70 & 7.63 & 7.01 & 6.21 & 7.98 & 6.38 & \textbf{6.11} \\
 \cline{2-9}
 & $E_v(\times10^{-4})$ & 10.58 & 7.71 & 6.49 & \textbf{5.53} & 8.60 & 6.02 & 5.78\\
@@ -329,7 +330,7 @@ The detail of our and their parameters can be found in the supplementary materia
 We also test our algorithm on the real-world 3d models with the above methods and further demonstrate the effectiveness of our model.
 Figure~\ref{Fig:TrueMesh} illustrates the three real scanned models, angel, rabbit and iron respectively.
 From the eye of angel, our model depicts the eyelid well.
-And the iron model also reveals the ability in maintaining the edge structure. 
+And the iron model also reveals the ability in maintaining the edge structure.
 
 Table~\ref{Tab:Time} provides the timing of our approach for the shown examples, on a PC with an Intel Core $i7-4790K$.
 Even with those bigger mesh, the time of our algorithm is acceptable.
@@ -402,33 +403,33 @@ Even with those bigger mesh, the time of our algorithm is acceptable.
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|}
 \hline
-\rule[-1ex]{0pt}{3.5ex} Model & Vertics & Faces & Time(s) & $k_{iter}$ \\
+\rule[-1ex]{0pt}{3.5ex} Model & Vertices & Faces & Time(s) & $k_{iter}$ \\
 \hline\hline
 
-\rule[-1ex]{0pt}{3.5ex} Octahedron (Fig~\ref{Fig:octahedron}) & Vertices & Faces & Time(s) & $k_{iter}$ \\
+\rule[-1ex]{0pt}{3.5ex} Octahedron  & 1221 & 2438 & 2.75 & $75$ \\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex} Fandisk (Fig~\ref{Fig:datasets}) & 6475 & 12946 & 2.77 & 30 \\
+\rule[-1ex]{0pt}{3.5ex} Fandisk  & 6475 & 12946 & 2.77 & 30 \\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex} Prism (Fig~\ref{Fig:datasets}) & Vertices & Faces & Time(s) & $k_{iter}$ \\
+\rule[-1ex]{0pt}{3.5ex} Prism  & 3914 & 7824 & 2.55 & $50$ \\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex} Bunny (Fig~\ref{Fig:datasets}) & 34834 & 69451 & 4.33 & 4 \\
+\rule[-1ex]{0pt}{3.5ex} Bunny  & 34834 & 69451 & 4.33 & 4 \\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex} Julius (Fig~\ref{Fig:datasets}) & 36201 & 71912 & 3.54 & 4 \\
+\rule[-1ex]{0pt}{3.5ex} Julius  & 36201 & 71912 & 3.54 & 4 \\
 \hline
 %\rule[-1ex]{0pt}{3.5ex} Twelve (Fig~\ref{Fig:Impulsive}) & 4610 & 9216 & 7.03 & 50 \\
 %\hline
 
-\rule[-1ex]{0pt}{3.5ex} Angel (Fig~\ref{Fig:TrueMesh}) & 24566 & 48090 &  & $k_{iter}$ \\
+\rule[-1ex]{0pt}{3.5ex} Angel  & 24566 & 48090 & 2.86 & $4$ \\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex} Rabbit (Fig~\ref{Fig:TrueMesh}) & 37394 & 73679 &  & $k_{iter}$ \\
+\rule[-1ex]{0pt}{3.5ex} Rabbit  & 37394 & 73679 & 4.18 & $4$ \\
 \hline
 
-\rule[-1ex]{0pt}{3.5ex} Iron (Fig~\ref{Fig:TrueMesh}) & 85574 & 168285 &  & $k_{iter}$ \\
+\rule[-1ex]{0pt}{3.5ex} Iron & 85574 & 168285 & 14.67 & $20$ \\
 \hline
 
 \end{tabular}
@@ -438,17 +439,17 @@ Even with those bigger mesh, the time of our algorithm is acceptable.
 \subsection{Limitation and discussion}
 
 Although our model is effective for denoising most meshes, it still has some limitations.
-First, although we control the normal difference by $\sigma_r$ and $\sigma_s$, our parameters can not adaptively change according the local characteristic of mesh, inevitably lost some details.
+First, we control the normal difference by $\sigma_r$ and $\sigma_s$, but our parameters can not adaptively change according the local characteristic of mesh, inevitably lost some details.
 Second, our algorithm easily generates folded triangles in some cases.
 The process of vertex update may results in the error, because it only depends on the orthogonality between the filtered normals and the new edges.
-Third, our algorithm can not guarantee algorithm convergence from the figure~\ref{Fig:Convergence}.
+Third, our method can not guarantee algorithm convergence from the figure~\ref{Fig:Convergence}.
 The main reason is that we apply local strategy to filter face normals, which not ensures the global structure of mesh.
 For solving this problem, we need use a global filtering strategy like~\cite{zheng2011bilateral}.
 \begin{figure}[htb]
 \centering
-\includegraphics[width = 8cm]{results/convergence.jpg}
+\includegraphics[width = 8cm]{results/Convergence/convergence.jpg}
 \vspace{0.5mm}
-\caption{ the convergence.\jj{(figure should be changed)}}
+\caption{ Convergence plots of error metrics $E_n$ and $E_v$ on bunny models.(put the free noisy model)}
 \label{Fig:Convergence}
 \end{figure}
 
