@@ -50,3 +50,4 @@ PFilter_direct_color_MEX
 /src/Denoising/*.obj
 batchingM/*.obj
 *.asv
+src/OpenMesh/OpenMeshD.lib
